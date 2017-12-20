@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Document</title>
+    <meta name="Keywords" content="关键词，关键字">
+    <meta name="Author" content="dongdong">
+    <meta name="decirption" content="描述信息">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+        #hot ul:after{content: ""; display: block; clear: both;}
+        #hot ul li{float: left; cursor: pointer; margin-left: 10px;}
+        #list p{cursor: pointer;}
+        
+        
+    </style>
+</head>
+<body>
+
+
+<input id="search" type="text">
+<div id="p">
+
+</div>
+<script>
+
+var oSearch = document.getElementById("search");
+oSearch.onkeyup = function(e){
+    if(e && e.keyCode === 13){
+        window.location.href="https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&key="+oSearch.value+"&jsonpCallback=cdd";
+    }
+    var os = document.createElement("script");
+    p.style.display = oSearch.value?"block":"none";
+    os.src = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&key="+oSearch.value+"&jsonpCallback=cdd";
+    document.body.appendChild(os);
+    os.onload = function(){
+        document.body.removeChild(this);
+    }
+};
+function cdd(json) {
+    var str;
+    var array = json['data'];
+    p.innerHTML = "";
+    for(var key in array){
+        str = "";
+        for(var i in array[key]["itemlist"]){
+            str = array[key]["itemlist"][i].name +"---"+ array[key]["itemlist"][i].singer ;
+            console.log(array[key]["itemlist"][i].name);
+            console.log(array[key]["itemlist"][i].singer);
+            p.innerHTML += "<p>"+str+"</p>";
+        }
+    }
+}
+</script>
+<!--<script>-->
+    <!--var $list = $("#list");-->
+    <!--$("#btn").click(function () {-->
+        <!--var name = $("#search").val();-->
+        <!--var url = 'https://route.showapi.com/213-1?keyword='+name+'&page=1&showapi_appid=52163&showapi_test_draft=false&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';-->
+        <!--$.ajax({-->
+            <!--dataType: "json",-->
+            <!--url: url,-->
+            <!--type: "post",-->
+            <!--success: function (data) {-->
+                <!--var musicArray = data.showapi_res_body.pagebean.contentlist;//获取音乐列表-->
+                <!--console.log(musicArray);-->
+                <!--$list.html("");-->
+                <!--for(var i = 0;i<musicArray.length;i++){-->
+                    <!--var $p = $("<p>"+musicArray[i].m4a+"</p><input value='播放&#45;&#45;"+musicArray[i].songname+"' data-src='"+musicArray[i].m4a+"' type='button'>");-->
+                    <!--$list.append($p);-->
+                <!--}-->
+            <!--}-->
+        <!--});-->
+    <!--});-->
+
+
+    <!--var $hot = $("#hot");-->
+    <!--$hot.click(function (e) {-->
+        <!--$list.html("");-->
+        <!--var target = e.target;-->
+        <!--if(target.nodeName === "LI"){-->
+            <!--var src = target.dataset.num;-->
+            <!--var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid='+src+'&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d'-->
+            <!--$.ajax({-->
+                <!--dataType: "json",-->
+                <!--url: url,-->
+                <!--type: "post",-->
+                <!--success: function (data) {-->
+                    <!--var list = data.showapi_res_body.pagebean.songlist;-->
+                    <!--for(var key in list){-->
+                        <!--var $p = "<p data-song = '"+list[key].url+"'>播放："+list[key].songname+"-&#45;&#45;歌手："+list[key].singername+"</p>";-->
+                        <!--$list.append($p);-->
+                    <!--}-->
+                <!--}-->
+            <!--})-->
+        <!--}-->
+    <!--});-->
+    <!--$list.click(function (e) {-->
+        <!--var target = e.target;-->
+        <!--var src;-->
+        <!--if(target.nodeName === "INPUT"){-->
+            <!--src= target.dataset.src;-->
+            <!--musicSrc.src = src;-->
+        <!--}else if(target.nodeName === "P"){-->
+            <!--//src = $(target).attr('data-song');-->
+            <!--src = target.dataset.song;-->
+            <!--console.log(src);-->
+            <!--musicSrc.src = src;-->
+        <!--}-->
+    <!--})-->
+
+
+
+<!--</script>-->
+</body>
+</html>
