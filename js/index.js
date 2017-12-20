@@ -116,9 +116,9 @@ $btn.click(function () {
     }
 });
 
+var maxNum;
 // 遍历数组显示歌单
 function init(musicArray) {
-    var maxNum;
     $songListInfo.html("");
     for (var key in musicArray) {
         musicArray[key].m4a = musicArray[key].m4a || musicArray[key].url;
@@ -139,10 +139,7 @@ function init(musicArray) {
             "                    <div class='song-time fl-r'>"+musicArray[key].albumname+"</div>\n" +
             "                </li>")
         $songListInfo.append($li);
-        maxNum = $li.find(".song-name").html();
-        if(maxNum.length>25){       //定义希望显示的长度
-            $li.find(".song-name").html(maxNum.substr(0,25)+"...")      // 打印
-        }
+        ellipsis($li.find(".song-name"),25)
     }
     //添加点击播放事件
     $play = $(".play");
@@ -158,7 +155,13 @@ function init(musicArray) {
     oContent.style.top = '50px';
 }
 
-
+//长度太长自动截取后面后面省略
+function ellipsis($obj,num) {
+    maxNum = $obj.html();
+    if(maxNum.length>num){       //定义希望显示的长度
+        $obj.html(maxNum.substr(0,num)+"...")      // 打印
+    }
+}
 // 自定义滚动条js
 function scroll() {
     var oBoxScrollHeight = oBox.scrollHeight;
@@ -364,7 +367,6 @@ function songInfo(index) {
         var id = $li.eq(index).attr("data-songid");//歌曲id
         var pic = $li.eq(index).attr("data-pic");//歌曲图片
         var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
-        console.log(album);
         progress(time);//添加进度条
         var timerr = toSecond(time);
         $progress.find("p").eq(0).html(songname+"---"+name);
@@ -374,25 +376,66 @@ function songInfo(index) {
         $info.find("#singer-album p").eq(0).html(songname);
         $info.find("#singer-album p").eq(1).html(name);
         $info.find("#singer-album p").eq(2).html(album);
+        ellipsis($info.find("#singer-album p").eq(0),15);
+        ellipsis($info.find("#singer-album p").eq(1),15);
+        ellipsis($info.find("#singer-album p").eq(2),15);
         // $info.find("#lyric .box").eq(0).html();
         lyric(id);//显示歌词部分
         voice();
     }
 }
+
+
+function HtmlDecode(str) {
+    var div = document.createElement("div");
+    div.innerHTML = str;
+    return div.textContent || div.innerText;
+}
 //获取歌词
 function lyric(id) {
-    var url = 'https://route.showapi.com/213-2?musicid='+id+'&showapi_appid=52163&showapi_test_draft=false&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
+    var url;//存放搜错歌词的地址
+    var lyric;
+    $info.find("#lyric .box").eq(0).html("");
+    url = 'https://route.showapi.com/213-2?musicid='+id+'&showapi_appid=52163&showapi_test_draft=false&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
     $.ajax({
         type: "get",
         url: url,
         dataType: "json",
         success: function (data) {
-            var lyric = data.showapi_res_body.lyric;
-            $info.find("#lyric .box").eq(0).html(lyric);
-            /*歌词处理*/
+            lyric = data.showapi_res_body.lyric;
+            lyric = HtmlDecode(lyric);//要进行转义
 
+            var array = toLyric(lyric);
+            console.log(array);
+            for(var i in array){
+                var $p = $("<p>"+array[i]+"</p>");
+                $info.find("#lyric .box").eq(0).append($p);
+            }
         }
     })
+}
+//歌词处理部分
+function toLyric(data) {
+    var array = [];
+    /*歌词处理*/
+    var str1 = data.split("[");
+    var str2 = [];
+    var str3 = [];
+    str1.splice(0,6);//去掉前六个无用数据
+
+    for(var i = 0;i< str1.length;i++){
+        str1[i] = str1[i].split("]");
+        str2[i] = str1[i][0].split(":")//存放时间
+        str3[i] = str1[i][1];
+        array[(str2[i][0]*60 + parseFloat(str2[i][1]))] = str1[i][1];
+
+    }
+    var first;
+    for(i = 0; i<str2.length;i++){
+        first = str2[i][0]*60 + parseInt(str2[i][1]);
+        array[first] = str3[i];
+    }
+    return array;
 }
 
 //传递秒数返回时间
