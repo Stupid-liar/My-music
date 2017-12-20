@@ -1,5 +1,5 @@
 html body{
-    /*overflow: hidden;*/
+    overflow: hidden;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -323,7 +323,7 @@ header span{
     width: 60%;
     height: 400px;
     overflow: hidden;
-    border: 1px solid #ffffff;
+    /*border: 1px solid #ffffff;*/
 }
 #lyric .box{
     position: absolute;
@@ -331,13 +331,14 @@ header span{
     left: 0;
     width: 100%;
     height: 100%;
+    transition: 0.5s;
 }
 #lyric p{
     width: 100%;
     height: 40px;
     line-height: 40px;
     text-align: center;
-    color: #ffffff;
+    color: #c7c6d4;
 }
 
 /*footer S*/

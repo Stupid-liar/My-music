@@ -405,18 +405,40 @@ function lyric(id) {
             lyric = data.showapi_res_body.lyric;
             lyric = HtmlDecode(lyric);//要进行转义
 
-            var array = toLyric(lyric);
-            console.log(array);
+            toLyric(lyric);
             for(var i in array){
-                var $p = $("<p>"+array[i]+"</p>");
+                var $p = $("<p id='"+i+"'>"+array[i]+"</p>");
                 $info.find("#lyric .box").eq(0).append($p);
             }
+            var $box = $info.find("#lyric .box");
+            var $lyric = $box.find("p");
+            var pH = $lyric.height();
+            //歌词监听时间未完成
+            $music.on("timeupdate",function () {
+                var num = $music[0].currentTime;
+                // $lyric.eq(num).style.color = "#fff";
+                $lyric.each(function (i) {
+                    if($music[0].currentTime > this.id){
+                        $(this).css({
+                            color: '#ffffff',
+                            fontSize: "20px"
+                        });
+                        $box.css({
+                            top: -num*pH+400
+                        });
+                    }
+                });
+            })
         }
     })
 }
+
+
+//存放歌词
+var array = [];
 //歌词处理部分
 function toLyric(data) {
-    var array = [];
+    array = [];
     /*歌词处理*/
     var str1 = data.split("[");
     var str2 = [];
@@ -435,7 +457,6 @@ function toLyric(data) {
         first = str2[i][0]*60 + parseInt(str2[i][1]);
         array[first] = str3[i];
     }
-    return array;
 }
 
 //传递秒数返回时间
@@ -551,6 +572,7 @@ function progress(time) {
             progress($li.eq(index).attr("data-seconds"));//添加进度
             $progress.find("p").eq(0).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
             $progress.find("p").eq(2).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
+            lyric($li.eq(index).attr("data-songid"))
         }
     },1000);
     $Pprogress.click(function (e) {
