@@ -2,61 +2,45 @@
 //by - dongdong                     //
 //time: 2017.12.16;                 //
 //**********************************//
-var $btn = $("#btn"),
-    $searchInput = $("#search-input"),
-    $songListInfo = $("#song-list-info"),//显示歌
-    $searchList = $("#searchList"),
-    $music = $("#music"),
-    $play;//播放按钮
-var $oncheck;//存放选择按钮
-var oBox = document.getElementById("con-con");//歌曲查询显示部分
-var $info = $("#info");
-var $progress = $("#progress");//所有信息
-var $download = $("#download");//下载按钮
+var $btn = $("#btn"),//搜索按钮
+    $searchInput = $("#search-input"),//搜索框
+    $songList = $("#song-list"),//歌曲头
+    $songListInfo = $("#song-list-info"),//显示歌信息
+    $searchList = $("#searchList"),//搜索提示框
+    $music = $("#music"),//audio标签
+    $play,//播放按钮
+    $oncheck,//存放选择按钮
+    stop = false,// 暂停
+    $stop = $("#musicMiddle"),
+    oBox = document.getElementById("con-con"),//歌曲查询显示部分
+    $info = $("#info"),//右半部分歌曲歌词专辑显示部分
+    $progress = $("#progress"),//所有信息初始化
+    $download = $("#download"),//下载按钮
+    $prev = $("#musicLeft"),//上一曲
+    $next = $("#musicRight"),//下一曲
+    flag = true,//音量开关
+    $li,//存放所有显示的歌曲li
+    $voiveControl = $("#voiceControl"),//音量控制
+    $voice = $("#voice"),//音量部分
+    $progress2 = $voice.find(".progress").eq(0),//音量的进度条
+    $pot = $progress2.find(".pot").eq(0),//音量进度条的pot
+    end = 110,//记录声音节点结束位置(控制音量)
+    pW = $progress2.width(),//音量进度条的宽度
+    maxNum,//存放长度，太长则显示省略号
+    timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)
+    way = true, //true顺序。false，单曲
+    $songway = $("#flag"),//单曲与循环的方式
+    $list = $("#list"),//左侧列表点击切换li列表
+    show = 0,//存放正在播放的歌词p标签的index值(方便每次填入歌词是显示正确行数)
+    index;//当前播放的歌曲（序号）
 
-//js滚动条
+//js滚动条（自动滚动条，没来的及写jq,把之前的js拿来用了）
 var oContent = document.getElementById("song-list-info");
 var oScroll = document.getElementById("scroll");
 var oScrollHeight = oScroll.clientHeight;
 var oBoxHeight = oBox.clientHeight;
 
 
-// 暂停
-var stop = false;
-var $stop = $("#musicMiddle");
-
-//上一曲
-var $prev = $("#musicLeft");
-var $li;
-
-//下一曲
-var $next = $("#musicRight");
-
-var flag = true;//音量开关
-
-var $songList = $("#song-list");
-var $songListInfo = $("#song-list-info");//选中的项
-//音量
-var $voiveControl = $("#voiceControl");//音量控制
-var $voice = $("#voice");
-var $progress2 = $voice.find(".progress").eq(0);//音量的进度条
-var $pot = $progress2.find(".pot").eq(0);
-var pW = $progress2.width();
-
-var maxNum;//存放长度，太长则显示省略号
-var timer;//定时器进度条
-
-var end = 110;//记录声音节点结束位置
-//顺序播放和单曲循环
-var way = true; //true顺序。false，单曲
-var $songway = $("#flag");
-
-//列表点击
-var $list = $("#list");
-
-var show = 0;//存放正在播放的歌词p标签的index值
-
-var index;//当前播放的歌曲
 // 初始化默认欧美风格
 (function () {
     var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid=3&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
