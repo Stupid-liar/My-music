@@ -22,11 +22,14 @@ var $btn = $("#btn"),//搜索按钮
     $pot = $progress2.find(".pot").eq(0),//音量进度条的pot
     $songway = $("#flag"),//单曲与循环的方式
     $list = $("#list"),//左侧列表点击切换li列表
-    pW = $progress2.width();//音量进度条的宽度
+    pW = $progress2.width(),//音量进度条的宽度
+    $Pprogress = $progress.find(".progress").eq(0),//存放进度条的进度
+    PW = $Pprogress.width(),//进度条的宽度
+    $Ppot = $Pprogress.find(".pot").eq(0);//进度条上的点
 
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
-    timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)
+    //timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)(后来不用了)
     show = 0,//存放正在播放的歌词p标签的index值(方便每次填入歌词是显示正确行数)
     index,//当前播放的歌曲（序号）
     $play,//播放按钮(便于改变列表时添加)
@@ -46,6 +49,7 @@ var oContent = $songListInfo[0],
     oScroll = $("#scroll")[0],//自定义滚动条旁边的条
     oScrollHeight = oScroll.clientHeight,//可视高度
     oBoxHeight = oBox.clientHeight;
+
 
 
 // 初始化默认欧美风格
@@ -114,6 +118,10 @@ $btn.click(function () {
 var sumTime;
 $music.on("canplaythrough",function () {
     sumTime = $music[0].duration;
+    if(isNaN(sumTime)){
+        $music[0].load();
+    }
+    sumTime = $music[0].duration;
     sumTime = parseInt(sumTime);
 });
 
@@ -153,6 +161,7 @@ function init(musicArray) {
         songInfo(index);
         stop = true;//设置为可暂停
         $stop.prop("class","iconfont icon-pause-20");
+        $Ppot.css({left: 0})
     });
     oContent.style.top = '50px';
     //添加选中事件
@@ -161,6 +170,7 @@ function init(musicArray) {
     $oncheck.click(function () {
         $(this).toggleClass("oncheck");
     })
+
 }
 
 //长度太长自动截取后面后面省略
@@ -364,7 +374,6 @@ $next.click(function () {
     songInfo(index);
 });
 
-
 // 时间音量下载和作者等信息和右侧信息
 function songInfo(index) {
     if($music[0].src !== undefined){
@@ -378,7 +387,6 @@ function songInfo(index) {
         if( isNaN(time) ){
             time = sumTime;
         }
-        progress(time);//添加进度条
         var timerr = toSecond(time);
         $progress.find("p").eq(0).html(songname+"---"+name);
         $progress.find("p").eq(2).html(timerr);
@@ -441,7 +449,6 @@ function lyric(id) {
             }else {
                 $info.find("#lyric .box").eq(0).append($("<p>未找到</p>"));
             }
-
             show = 0;//歌词条数从第一条开始
         }
     })
@@ -449,6 +456,7 @@ function lyric(id) {
 
 //音乐添加时间更新歌词timeupdate,seeked和seeking事件监听播放源改变
 $music.on("timeupdate",function () {
+    //歌词部分
     var $box = $info.find("#lyric .box");
     var $lyric = $box.find("p");
 
@@ -461,8 +469,39 @@ $music.on("timeupdate",function () {
     $box.css({
         top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
     });
+    //进度控制
+
+    $Ppot.css({
+        left: $music[0].currentTime/sumTime*PW
+    });
+    var m = Math.floor($music[0].currentTime/60);
+    var s = parseInt($music[0].currentTime%60);
+    var time2 = toTwo(m)+":"+toTwo(s);//时间转换
+    $progress.find("p").eq(1).html(time2);
+
+    if($music[0].currentTime >= sumTime){
+        $Ppot.css({
+            left: 0
+        });
+        $li.eq(index).attr("play",false);
+        if(way){
+            index = (index === $li.length - 1)?0:index + 1;
+        }
+        $li.eq(index).attr("play",true);//设置当前为播放项
+        $music[0].src = $li.eq(index).attr("data-songSrc");
+        $progress.find("p").eq(0).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
+        $progress.find("p").eq(2).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
+        lyric($li.eq(index).attr("data-songid"));
+        songInfo(index)
+    }
+});
+$music.on("seeking",function () {
+    $music[0].pause();
 });
 
+$music.on("seeked",function () {
+    $music[0].play();
+});
 //歌词处理部分
 function toLyric(data) {
     array = {};
@@ -480,7 +519,6 @@ function toLyric(data) {
         array[num] = str1[i][1];
     }
 }
-
 
 //传递秒数返回时间
 function toSecond(time){
@@ -547,16 +585,9 @@ function voice() {
         alert("暂时未完成，无法下载~")
     })
 })();
+
 //进度控制
-function progress(time) {
-    timer && clearInterval(timer);//清除上一个定时器
-    var end;//结束位置
-    var $Pprogress = $("#progress").find(".progress").eq(0);
-    var PW = $Pprogress.width();
-    var $Ppot = $Pprogress.find(".pot").eq(0);
-    $Ppot.css({
-        left: 0
-    });
+(function () {
     $Ppot.mousedown(function (e) {
         var x = e.clientX;
         var S = $Ppot.position().left; //初始位置
@@ -569,38 +600,13 @@ function progress(time) {
             $Ppot.css({
                 left: end
             });
+            $music[0].currentTime = (end/PW)*sumTime;
         });
         $(document).mouseup(function () {
-            $music[0].currentTime = (end/PW)*time;
             $(document).off("mousemove");
             $(document).off("mouseup");
         });
     });
-    var time1;//存放当前时间
-    timer = setInterval(function () {
-        $Ppot.css({
-            left: $music[0].currentTime/time*PW
-        });
-        time1 = $music[0].currentTime;
-        var m = Math.floor(time1/60);
-        var s = parseInt(time1%60);
-        var time2 = toTwo(m)+":"+toTwo(s);//时间转换
-        $progress.find("p").eq(1).html(time2);
-        if($music[0].ended){
-            clearInterval(timer);
-            $li.eq(index).attr("play",false);
-            if(way){
-                index = (index === $li.length - 1)?0:index + 1;
-            }
-            $li.eq(index).attr("play",true);//设置当前为播放项
-            $music[0].src = $li.eq(index).attr("data-songSrc");
-            progress($li.eq(index).attr("data-seconds"));//添加进度
-            $progress.find("p").eq(0).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
-            $progress.find("p").eq(2).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
-            lyric($li.eq(index).attr("data-songid"));
-            songInfo(index)
-        }
-    },1000);
     $Pprogress.click(function (e) {
         var x = e.clientX;
         var PL = $Pprogress.offset().left;
@@ -608,9 +614,9 @@ function progress(time) {
         $Ppot.css({
             left: x_
         });
-        $music[0].currentTime = x_/PW*time;
+        $music[0].currentTime = x_/PW*sumTime;
     });
-}
+})();
 
 //单曲和循环播放
 $songway.click(function () {

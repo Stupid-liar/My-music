@@ -15,17 +15,41 @@
 </head>
 <body>
 
-<audio id="audio" src="http://ws.stream.qqmusic.qq.com/498307.m4a?fromtag=46" autoplay controls></audio>
-
+<audio id="audio" src="" autoplay controls></audio>
+<input type="button" value="下一首" id="btn">
 <script>
-    console.log(audio.duration);
+    var json = {
+        1: "http://ws.stream.qqmusic.qq.com/105572127.m4a?fromtag=46",
+        2: "http://ws.stream.qqmusic.qq.com/498307.m4a?fromtag=46",
+        3: "http://ws.stream.qqmusic.qq.com/7063693.m4a?fromtag=46"
+    };
+    var i = 2;
+    $("#audio")[0].src = json[1];
+    $("#btn").click(function () {
+        $("#audio")[0].src = json[i];
+        i = 3;
+    });
+//    console.log(audio.duration);
 //    setTimeout(function () {
 //
 //    },1000)
-//$("#audio").on("canplaythrough",function () {
-//    console.log($("#audio")[0].duration);
-//})
-
+    $("#audio").on("canplaythrough",function () {
+        if(isNaN($("#audio")[0].duration)){
+            $("#audio")[0].load();
+            return
+        }
+//        console.log($("#audio")[0].duration);
+    });
+    $("#audio").on("timeupdate",function () {
+        if(isNaN($("#audio")[0].duration)){
+            $("#audio")[0].load();
+            return
+        }
+//        console.log($("#audio")[0].duration);
+    })
+    $("#audio").on("seeking",function () {
+        console.log($("#audio")[0].currentTime);
+    })
 </script>
 </body>
 </html>
