@@ -26,9 +26,9 @@ var $btn = $("#btn"),//搜索按钮
     pW = $progress2.width(),//音量进度条的宽度
     $Pprogress = $progress.find(".progress").eq(0),//存放进度条的进度
     PW = $Pprogress.width(),//进度条的宽度
-    $Ppot = $Pprogress.find(".pot").eq(0);//进度条上的点
+    $Ppot = $Pprogress.find(".pot").eq(0),//进度条上的点
+    $img = $("#img");//两个图片
 
-var $img = $("#img");
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
     //timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)(后来不用了)
@@ -37,7 +37,8 @@ var maxNum,//存放长度，太长则显示省略号
     $play,//播放按钮(便于改变列表时添加)
     $oncheck,//存放选择按钮
     $li,//存放所有显示的歌曲li
-    array = {};//存放歌词
+    array = {},//存放歌词
+    sumTime;//存放总时间，随着播放源改变而改变
 
 /*开关变量（可修改）*/
 var way = true, //true顺序。false，单曲
@@ -117,7 +118,6 @@ $btn.click(function () {
     }
 });
 
-var sumTime;
 $music.on("canplaythrough",function () {
     sumTime = $music[0].duration;
     if(isNaN(sumTime)){
@@ -487,6 +487,9 @@ $music.on("timeupdate",function () {
     $Ppot.css({
         left: $music[0].currentTime/sumTime*PW
     });
+    $Pprogress.css({
+        background: '-webkit-linear-gradient(left,red '+$music[0].currentTime * 100/sumTime+'%, #ffffff '+$music[0].currentTime * 100/sumTime+'%, #ffffff 100%)'
+    });
     var m = Math.floor($music[0].currentTime/60);
     var s = parseInt($music[0].currentTime%60);
     var time2 = toTwo(m)+":"+toTwo(s);//时间转换
@@ -495,6 +498,9 @@ $music.on("timeupdate",function () {
     if($music[0].currentTime >= sumTime){
         $Ppot.css({
             left: 0
+        });
+        $Pprogress.css({
+            background: '#ffffff'
         });
         $li.eq(index).attr("play",false);
         if(way){
@@ -508,13 +514,7 @@ $music.on("timeupdate",function () {
         songInfo(index)
     }
 });
-$music.on("seeking",function () {
-    $music[0].pause();
-});
 
-$music.on("seeked",function () {
-    $music[0].play();
-});
 //歌词处理部分
 function toLyric(data) {
     array = {};
@@ -551,6 +551,9 @@ function voice() {
     var potL = $pot.position().left;
     var voice = potL/pW;
     flag?$music[0].volume = voice:$music[0].volume = 0;
+    $progress2.css({
+        background: '-webkit-linear-gradient(left,red '+voice * 100+'%, #ffffff '+voice * 100+'%, #ffffff 100%)'
+    })
 }
 
 //调节音量大小
@@ -568,6 +571,9 @@ function voice() {
                 left: end
             });
             $music[0].volume = end/pW;
+            $progress2.css({
+                background: '-webkit-linear-gradient(left,red '+(end/pW) * 100+'%, #ffffff '+(end/PW) * 100+'%, #ffffff 100%)'
+            })
         });
         $(document).mouseup(function () {
             $(document).off("mousemove");
@@ -581,6 +587,9 @@ function voice() {
         $pot.css({
             left: x_
         });
+        $progress2.css({
+            background: '-webkit-linear-gradient(left,red '+(x_/pW) * 100+'%, #ffffff '+(x_/pW) * 100+'%, #ffffff 100%)'
+        })
         $music[0].volume = x_/pW ;
     });
     $voice.find("a").click(function () {
@@ -613,6 +622,7 @@ function voice() {
     $Ppot.mousedown(function (e) {
         var x = e.clientX;
         var S = $Ppot.position().left; //初始位置
+        $music[0].pause();
         $(document).mousemove(function (e) {
             var eX = e.clientX;
             var x_ = eX - x;
@@ -623,8 +633,12 @@ function voice() {
                 left: end
             });
             $music[0].currentTime = (end/PW)*sumTime;
+            $Pprogress.css({
+                background: '-webkit-linear-gradient(left,red '+(end/PW) * 100/sumTime+'%, #ffffff '+(end/PW) * 100/sumTime+'%, #ffffff 100%)'
+            });
         });
         $(document).mouseup(function () {
+            $music[0].play();
             $(document).off("mousemove");
             $(document).off("mouseup");
         });
@@ -637,6 +651,9 @@ function voice() {
             left: x_
         });
         $music[0].currentTime = x_/PW*sumTime;
+        $Pprogress.css({
+            background: '-webkit-linear-gradient(left,red '+(x_/PW) * 100/sumTime+'%, #ffffff '+(x_/PW) * 100/sumTime+'%, #ffffff 100%)'
+        });
     });
 })();
 
@@ -658,7 +675,7 @@ $songway.click(function () {
         }
     })
 })();
-//音乐播放异常
+//音乐播放异常,自动进入下一曲
 $music.on("error",function () {
     $next.click();
 });
