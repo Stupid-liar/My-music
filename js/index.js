@@ -1,44 +1,51 @@
 //**********************************//
-//by - dongdong                     //
+//by - 东东                         //
 //time: 2017.12.16;                 //
 //**********************************//
+
+/*获取部分（不可变量）*/
 var $btn = $("#btn"),//搜索按钮
     $searchInput = $("#search-input"),//搜索框
     $songList = $("#song-list"),//歌曲头
     $songListInfo = $("#song-list-info"),//显示歌信息
     $searchList = $("#searchList"),//搜索提示框
     $music = $("#music"),//audio标签
-    $play,//播放按钮
-    $oncheck,//存放选择按钮
-    stop = false,// 暂停
     $stop = $("#musicMiddle"),
-    oBox = document.getElementById("con-con"),//歌曲查询显示部分
     $info = $("#info"),//右半部分歌曲歌词专辑显示部分
     $progress = $("#progress"),//所有信息初始化
     $download = $("#download"),//下载按钮
     $prev = $("#musicLeft"),//上一曲
     $next = $("#musicRight"),//下一曲
-    flag = true,//音量开关
-    $li,//存放所有显示的歌曲li
     $voiveControl = $("#voiceControl"),//音量控制
     $voice = $("#voice"),//音量部分
     $progress2 = $voice.find(".progress").eq(0),//音量的进度条
     $pot = $progress2.find(".pot").eq(0),//音量进度条的pot
-    end = 110,//记录声音节点结束位置(控制音量)
-    pW = $progress2.width(),//音量进度条的宽度
-    maxNum,//存放长度，太长则显示省略号
-    timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)
-    way = true, //true顺序。false，单曲
     $songway = $("#flag"),//单曲与循环的方式
     $list = $("#list"),//左侧列表点击切换li列表
+    pW = $progress2.width();//音量进度条的宽度
+
+/*存储变量（存储和音乐播放相关信息）*/
+var maxNum,//存放长度，太长则显示省略号
+    timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)
     show = 0,//存放正在播放的歌词p标签的index值(方便每次填入歌词是显示正确行数)
-    index;//当前播放的歌曲（序号）
+    index,//当前播放的歌曲（序号）
+    $play,//播放按钮(便于改变列表时添加)
+    $oncheck,//存放选择按钮
+    $li,//存放所有显示的歌曲li
+    array = {};//存放歌词
+
+/*开关变量（可修改）*/
+var way = true, //true顺序。false，单曲
+    flag = true,//音量开关
+    stop = false,// 暂停，true为可暂停，false表示已经暂停不可以在暂停
+    end = 110;//记录声音节点结束位置(控制音量)(初始值可调节0~200左右视屏幕大小改变而改变)
 
 //js滚动条（自动滚动条，没来的及写jq,把之前的js拿来用了）
-var oContent = document.getElementById("song-list-info");
-var oScroll = document.getElementById("scroll");
-var oScrollHeight = oScroll.clientHeight;
-var oBoxHeight = oBox.clientHeight;
+var oContent = $songListInfo[0],
+    oBox = $("#con-con")[0],//歌曲查询显示部分    （js方便自定义滚动条）
+    oScroll = $("#scroll")[0],//自定义滚动条旁边的条
+    oScrollHeight = oScroll.clientHeight,//可视高度
+    oBoxHeight = oBox.clientHeight;
 
 
 // 初始化默认欧美风格
@@ -104,6 +111,11 @@ $btn.click(function () {
     }
 });
 
+var sumTime;
+$music.on("canplaythrough",function () {
+    sumTime = $music[0].duration;
+    sumTime = parseInt(sumTime);
+});
 
 // 遍历数组显示歌单
 function init(musicArray) {
@@ -363,6 +375,9 @@ function songInfo(index) {
         var id = $li.eq(index).attr("data-songid");//歌曲id
         var pic = $li.eq(index).attr("data-pic");//歌曲图片
         var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
+        if( isNaN(time) ){
+            time = sumTime;
+        }
         progress(time);//添加进度条
         var timerr = toSecond(time);
         $progress.find("p").eq(0).html(songname+"---"+name);
@@ -388,16 +403,18 @@ function songInfo(index) {
             background: "url('img/wave.gif')no-repeat 0 20%/100%",
             textIndent: "-500px",
             top: "40%"
-        })
+        });
+
     }
 }
 
-
+//歌词需要转码
 function HtmlDecode(str) {
     var div = document.createElement("div");
     div.innerHTML = str;
     return div.textContent || div.innerText;
 }
+
 //获取歌词
 function lyric(id) {
     var url;//存放搜错歌词的地址
@@ -430,10 +447,10 @@ function lyric(id) {
     })
 }
 
+//音乐添加时间更新歌词timeupdate,seeked和seeking事件监听播放源改变
 $music.on("timeupdate",function () {
     var $box = $info.find("#lyric .box");
     var $lyric = $box.find("p");
-    var pH = $lyric.height();
 
     $lyric.each(function () {
         if( Math.abs( $music[0].currentTime - this.id ) < 0.3){
@@ -445,8 +462,7 @@ $music.on("timeupdate",function () {
         top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
     });
 });
-//存放歌词
-var array = {};
+
 //歌词处理部分
 function toLyric(data) {
     array = {};
@@ -465,12 +481,13 @@ function toLyric(data) {
     }
 }
 
+
 //传递秒数返回时间
 function toSecond(time){
     var timerr;
     var m = Math.floor(time/60);
     var s = time%60;
-    isNaN(time)?timerr = "/未获取":timerr= "/ " + toTwo(m)+":"+toTwo(s);//时间转换
+    timerr= "/ " + toTwo(m)+":"+toTwo(s);//时间转换
     return timerr;
 }
 //时间位数不都补零
@@ -595,6 +612,7 @@ function progress(time) {
     });
 }
 
+//单曲和循环播放
 $songway.click(function () {
     way?$songway.prop("class","iconfont icon-danquxunhuan"):$songway.prop("class","iconfont  icon-shunxu");
     way = !way;
