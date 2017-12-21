@@ -284,9 +284,11 @@ $prev.click(function () {
     }
     $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
-    $("body").css({
-        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-    })
+    if(leftRight){
+        $("body").css({
+            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+        })
+    }
     songInfo(index);
 });
 //下一曲
@@ -298,9 +300,11 @@ $next.click(function () {
     }
     $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
-    $("body").css({
-        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-    })
+    if(leftRight){
+        $("body").css({
+            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+        })
+    }
     songInfo(index);
 });
 //暂停
@@ -426,9 +430,11 @@ function init(musicArray) {
         $stop.prop("class","iconfont icon-pause-20");
         $Ppot.css({left: 0});
         $img.find("img").addClass("rotate");//添加图片转动
-        $("body").css({
-            backgroundImage: "url("+$img.find("img").prop("src")+")"
-        })
+        if(leftRight){
+            $("body").css({
+                backgroundImage: "url("+$img.find("img").prop("src")+")"
+            })
+        }
     });
     oContent.style.top = '50px';
     //添加选中事件
@@ -669,7 +675,27 @@ function voice() {
 }
 
 
-
+var $set = $("#set");
+var leftRight = true;
+$set.find(".small").click(function () {
+    $li = $songListInfo.find("li");
+    if(leftRight){
+        $set.find(".small").css({
+            marginLeft: "50%"
+        })
+        $("body").css({
+            backgroundImage: "url('img/bg.jpg')"
+        })
+    }else {
+        $set.find(".small").css({
+            marginLeft: 0
+        })
+        $("body").css({
+            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+        })
+    }
+    leftRight = !leftRight;
+})
 
 
 
