@@ -28,6 +28,7 @@ var $btn = $("#btn"),//搜索按钮
     PW = $Pprogress.width(),//进度条的宽度
     $Ppot = $Pprogress.find(".pot").eq(0);//进度条上的点
 
+var $img = $("#img");
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
     //timer,//定时器进度条(这里脑子没转过来没有用timeupdate事件，而是添加定时器)(后来不用了)
@@ -162,7 +163,8 @@ function init(musicArray) {
         songInfo(index);
         stop = true;//设置为可暂停
         $stop.prop("class","iconfont icon-pause-20");
-        $Ppot.css({left: 0})
+        $Ppot.css({left: 0});
+        $img.find("img").addClass("rotate");//添加图片转动
     });
     oContent.style.top = '50px';
     //添加选中事件
@@ -344,9 +346,11 @@ $stop.click(function () {
     if(stop){
         $music[0].pause();
         $stop.prop("class","iconfont icon-bofang1");
+        $img.find("img").removeClass("rotate");
     }else {
         $music[0].play();
         $stop.prop("class","iconfont icon-pause-20");
+        $img.find("img").addClass("rotate");
     }
     stop = !stop;
 });
@@ -396,6 +400,7 @@ function songInfo(index) {
         $progress.find("p").eq(3).html(timerr);
         //$download.attr("href",$li.eq(index).attr("data-download"));//下载出问题了暂时无法下载
         $info.find("#img img").eq(0).prop("src",pic);
+        $info.find("#img img").eq(1).prop("src",smallPic);
         $info.find("#singer-album p").eq(0).html(songname);
         $info.find("#singer-album p").eq(1).html(name);
         $info.find("#singer-album p").eq(2).html(album);
