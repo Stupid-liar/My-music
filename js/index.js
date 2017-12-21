@@ -1,6 +1,7 @@
 //**********************************//
 //by - 东东                         //
 //time: 2017.12.16;                 //
+// dec:一个基于qq音乐的音乐播放器， //
 //**********************************//
 
 /*获取部分（不可变量）*/
@@ -131,7 +132,7 @@ function init(musicArray) {
     for (var key in musicArray) {
         musicArray[key].m4a = musicArray[key].m4a || musicArray[key].url;
         musicArray[key].albumname = musicArray[key].albumname || "";
-        var $li = $("<li data-album='"+musicArray[key].albumname+"' data-id='"+musicArray[key].songid+"' data-pic='"+musicArray[key].albumpic_big+"' data-songSrc='"+musicArray[key].m4a+"' data-download='"+musicArray[key].downUrl+"' data-songId='"+musicArray[key].songid+"' data-songer='"+musicArray[key].singername+"' data-seconds='"+musicArray[key].seconds+"' data-songname='"+musicArray[key].songname+"'>\n" +
+        var $li = $("<li data-album='"+musicArray[key].albumname+"' data-id='"+musicArray[key].songid+"'data-smallPic='"+musicArray[key].albumpic_small+"' data-pic='"+musicArray[key].albumpic_big+"' data-songSrc='"+musicArray[key].m4a+"' data-download='"+musicArray[key].downUrl+"' data-songId='"+musicArray[key].songid+"' data-songer='"+musicArray[key].singername+"' data-seconds='"+musicArray[key].seconds+"' data-songname='"+musicArray[key].songname+"'>\n" +
             "                    <div class='check fl-l'>\n" +
             "                    <div class='checkbox'>\n" +
             "                             <input type='checkbox'>\n" +
@@ -383,13 +384,16 @@ function songInfo(index) {
         var time = $li.eq(index).attr("data-seconds");//歌曲时间
         var id = $li.eq(index).attr("data-songid");//歌曲id
         var pic = $li.eq(index).attr("data-pic");//歌曲图片
+        var smallPic = $li.eq(index).attr("data-smallPic");//歌曲图片(小图)
         var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
+        var num = $li.eq(index).find(".song-num").text();
         if( isNaN(time) ){
             time = sumTime;
         }
         var timerr = toSecond(time);
-        $progress.find("p").eq(0).html(songname+"---"+name);
-        $progress.find("p").eq(2).html(timerr);
+        $progress.find("p").eq(0).html("当前播放：第"+num+"首");
+        $progress.find("p").eq(1).html(songname+"---"+name);
+        $progress.find("p").eq(3).html(timerr);
         //$download.attr("href",$li.eq(index).attr("data-download"));//下载出问题了暂时无法下载
         $info.find("#img img").eq(0).prop("src",pic);
         $info.find("#singer-album p").eq(0).html(songname);
@@ -425,6 +429,7 @@ function HtmlDecode(str) {
 
 //获取歌词
 function lyric(id) {
+    var id = id;
     var url;//存放搜错歌词的地址
     var lyric;
     $info.find("#lyric .box").eq(0).html("");
@@ -450,6 +455,9 @@ function lyric(id) {
                 $info.find("#lyric .box").eq(0).append($("<p>未找到</p>"));
             }
             show = 0;//歌词条数从第一条开始
+        },
+        error:function () {
+            lyric(id);
         }
     })
 }
@@ -477,7 +485,7 @@ $music.on("timeupdate",function () {
     var m = Math.floor($music[0].currentTime/60);
     var s = parseInt($music[0].currentTime%60);
     var time2 = toTwo(m)+":"+toTwo(s);//时间转换
-    $progress.find("p").eq(1).html(time2);
+    $progress.find("p").eq(2).html(time2);
 
     if($music[0].currentTime >= sumTime){
         $Ppot.css({
@@ -489,8 +497,8 @@ $music.on("timeupdate",function () {
         }
         $li.eq(index).attr("play",true);//设置当前为播放项
         $music[0].src = $li.eq(index).attr("data-songSrc");
-        $progress.find("p").eq(0).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
-        $progress.find("p").eq(2).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
+        $progress.find("p").eq(1).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
+        $progress.find("p").eq(3).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
         lyric($li.eq(index).attr("data-songid"));
         songInfo(index)
     }
@@ -560,6 +568,15 @@ function voice() {
             $(document).off("mousemove");
             $(document).off("mouseup");
         });
+    });
+    $progress2.click(function (e) {
+        var x = e.clientX;
+        var PL = $progress2.offset().left;
+        var x_ = x - PL;
+        $pot.css({
+            left: x_
+        });
+        $music[0].volume = x_/pW ;
     });
     $voice.find("a").click(function () {
         if(flag){
@@ -636,3 +653,7 @@ $songway.click(function () {
         }
     })
 })();
+//音乐播放异常
+$music.on("error",function () {
+    $next.click();
+});

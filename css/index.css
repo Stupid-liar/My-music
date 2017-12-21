@@ -361,7 +361,7 @@ header span{
     line-height: 40px;
     text-align: center;
     color: #c7c6d4;
-    transition: 1s;
+    transition: 3s;
 }
 #lyric p.on{
     color: #ffffff;
@@ -424,9 +424,12 @@ footer #music{
     left: 0;
 }
 #progress p:nth-child(2){
-    right: 50px;
+    left: 150px;
 }
 #progress p:nth-child(3){
+    right: 50px;
+}
+#progress p:nth-child(4){
     right: 0;
 }
 #progress>.progress{
@@ -434,8 +437,9 @@ footer #music{
     left: 0;
     top: 50%;
     width: 100%;
-    height: 3px;
+    height: 5px;
     background-color: #dddddd;
+    border-radius: 5px;
 }
 #progress>.progress>.pot{
     position: absolute;
@@ -471,6 +475,7 @@ footer #music{
     width: 70%;
     height: 3px;
     background-color: #dddddd;
+    border-radius: 5px;
 }
 #voice>.progress>.pot{
     position: absolute;
