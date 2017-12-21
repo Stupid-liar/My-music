@@ -1,15 +1,36 @@
-html body{
+body{
     overflow: hidden;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
     min-width: 1500px;
-    background: rgba(0,0,0,.7);
+    width: 100%;
+    height: auto;
+    background-image: url("../img/bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgba(0,0,0,.7);
 }
+.frosted-glass {
+    width: 100%;
+    height: 1080px;
+    background: inherit;
+    -webkit-filter: blur(50px);
+    -moz-filter: blur(50px);
+    -ms-filter: blur(50px);
+    -o-filter: blur(50px);
+    filter: blur(50px);
+    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=4, MakeShadow=false);
+}
+
 /*header S*/
 header{
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100px;
     color: #ffffff;
@@ -63,6 +84,9 @@ header span{
 }
 /*content S*/
 #content{
+    position: absolute;
+    left: 0;
+    top: 100px;
     width: 100%;
     height: 800px;
 }
@@ -272,8 +296,10 @@ header span{
     top: 0;
     height: 50px;
     width: 100%;
-    background-color: #483a48;
+    /*background-color: #c09bc0;*/
+    /*这里不用颜色覆盖，改用消失*/
     z-index: 99;
+    transition: 1s;
 }
 #song-list-info{
     position: absolute;

@@ -15,9 +15,41 @@
             height: 100px;
             background: -webkit-linear-gradient(left,red 20%, #ffffff 30%, #ffffff  100%)
         }
+        .container{
+            width: 287px;
+            height: 285px;
+            background-image: url("img/1.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+        .frosted-glass {
+            width: 287px;
+            height: 285px;
+            background: inherit;
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -ms-filter: blur(5px);
+            -o-filter: blur(5px);
+            filter: blur(5px);
+            filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=4, MakeShadow=false);
+        }
+        .weather{
+            width:80px;
+            height:80px;
+            margin-top: -200px;
+            margin-left: 100px;
+            position: relative;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
+
+<div class="container">
+    <div class="frosted-glass"></div>
+</div>
 <div id="box"></div>
 <a href="" download="http://ws.stream.qqmusic.qq.com/105572127.m4a?fromtag=46">下载</a>
 <audio id="audio" src="" autoplay controls></audio>

@@ -165,6 +165,9 @@ function init(musicArray) {
         $stop.prop("class","iconfont icon-pause-20");
         $Ppot.css({left: 0});
         $img.find("img").addClass("rotate");//添加图片转动
+        $("body").css({
+            backgroundImage: "url("+$img.find("img").prop("src")+")"
+        })
     });
     oContent.style.top = '50px';
     //添加选中事件
@@ -240,28 +243,19 @@ function scroll() {
         setTop(top);
     };
 
-    //显示scroll点击消失
-    /*(function(){
-        var flag = true , flag1 = true;//用来scroll的显示隐藏的
-        oBox.onmouseenter = function () {
-            flag1 = false;
-            oScroll.style.display = "block";
-        };
-        oBox.onmouseleave = function () {
-            flag1 = true;
-            flag && (oScroll.style.display = "none");
-        };
-        oScroll.onmousedown = function () {
-            flag = false;
-        };
-        document.addEventListener("mouseup" , function () {
-            flag = true;
-            flag1 && (oScroll.style.display = "none");
-        });
-    })();*/
-
     //设定bar和content的top值
     function setTop(top) {
+        if( top > 0 ){
+            $songList.css({
+                opacity: 0,
+                filter: "alpha(opacity:0)"
+            })
+        }else {
+            $songList.css({
+                opacity: 1,
+                filter: "alpha(opacity:100)"
+            })
+        }
         //限定top的取值范围
         top = Math.max(top , 0);
         top = Math.min(top , maxBTop);
@@ -364,6 +358,9 @@ $prev.click(function () {
     }
     $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
+    $("body").css({
+        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+    })
     songInfo(index);
 });
 
@@ -376,53 +373,51 @@ $next.click(function () {
     }
     $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
+    $("body").css({
+        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+    })
     songInfo(index);
 });
 
 // 时间音量下载和作者等信息和右侧信息
 function songInfo(index) {
-    if($music[0].src !== undefined){
-        $li = $songListInfo.find("li");
-        var songname = $li.eq(index).attr("data-songname");//歌曲名
-        var name = $li.eq(index).attr("data-songer");//歌手
-        var time = $li.eq(index).attr("data-seconds");//歌曲时间
-        var id = $li.eq(index).attr("data-songid");//歌曲id
-        var pic = $li.eq(index).attr("data-pic");//歌曲图片
-        var smallPic = $li.eq(index).attr("data-smallPic");//歌曲图片(小图)
-        var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
-        var num = $li.eq(index).find(".song-num").text();
-        if( isNaN(time) ){
-            time = sumTime;
-        }
-        var timerr = toSecond(time);
-        $progress.find("p").eq(0).html("当前播放：第"+num+"首");
-        $progress.find("p").eq(1).html(songname+"---"+name);
-        $progress.find("p").eq(3).html(timerr);
-        //$download.attr("href",$li.eq(index).attr("data-download"));//下载出问题了暂时无法下载
-        $info.find("#img img").eq(0).prop("src",pic);
-        $info.find("#img img").eq(1).prop("src",smallPic);
-        $info.find("#singer-album p").eq(0).html(songname);
-        $info.find("#singer-album p").eq(1).html(name);
-        $info.find("#singer-album p").eq(2).html(album);
-        ellipsis($info.find("#singer-album p").eq(0),15);
-        ellipsis($info.find("#singer-album p").eq(1),15);
-        ellipsis($info.find("#singer-album p").eq(2),15);
-        // $info.find("#lyric .box").eq(0).html();
-        lyric(id);//显示歌词部分
-        voice();
-        //播放的动态提示条.gif动画
-        $li.find(".song-num").css({
-            background: "none",
-            textIndent: 0,
-            top: 0
-        });
-        $li.find(".song-num").eq(index).css({
-            background: "url('img/wave.gif')no-repeat 0 20%/100%",
-            textIndent: "-500px",
-            top: "40%"
-        });
-
-    }
+    $li = $songListInfo.find("li");
+    var songname = $li.eq(index).attr("data-songname");//歌曲名
+    var name = $li.eq(index).attr("data-songer");//歌手
+    var time = $li.eq(index).attr("data-seconds");//歌曲时间
+    var id = $li.eq(index).attr("data-songid");//歌曲id
+    var pic = $li.eq(index).attr("data-pic");//歌曲图片
+    var smallPic = $li.eq(index).attr("data-smallPic");//歌曲图片(小图)
+    var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
+    var num = $li.eq(index).find(".song-num").text();
+    if( isNaN(time) ){time = sumTime;}//判断是否是NaN
+    var timerr = toSecond(time);
+    $progress.find("p").eq(0).html("当前播放：第"+num+"首");
+    $progress.find("p").eq(1).html(songname+"---"+name);
+    $progress.find("p").eq(3).html(timerr);
+    //$download.attr("href",$li.eq(index).attr("data-download"));//下载出问题了暂时无法下载
+    $info.find("#img img").eq(0).prop("src",pic);
+    $info.find("#img img").eq(1).prop("src",smallPic);
+    $info.find("#singer-album p").eq(0).html(songname);
+    $info.find("#singer-album p").eq(1).html(name);
+    $info.find("#singer-album p").eq(2).html(album);
+    ellipsis($info.find("#singer-album p").eq(0),15);
+    ellipsis($info.find("#singer-album p").eq(1),15);
+    ellipsis($info.find("#singer-album p").eq(2),15);
+    // $info.find("#lyric .box").eq(0).html();
+    lyric(id);//显示歌词部分
+    voice();
+    //播放的动态提示条.gif动画
+    $li.find(".song-num").css({
+        background: "none",
+        textIndent: 0,
+        top: 0
+    });
+    $li.find(".song-num").eq(index).css({
+        background: "url('img/wave.gif')no-repeat 0 20%/100%",
+        textIndent: "-500px",
+        top: "40%"
+    });
 }
 
 //歌词需要转码
@@ -677,5 +672,8 @@ $songway.click(function () {
 })();
 //音乐播放异常,自动进入下一曲
 $music.on("error",function () {
-    $next.click();
+    $li = $songListInfo.find("li");
+    $play = $(".play");
+    (index === ($li.length - 1))?index = 0:index++;
+    $play.eq(index).click();
 });

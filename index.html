@@ -14,119 +14,122 @@
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-<!--header S-->
-<header>
-    <h1 class="fl-l">My Music</h1><span class="iconfont icon-yinle"></span>
-    <div id="face">
-        <div id="set">设置</div>
-    </div>
-</header>
-<!--header E-->
+<div class="frosted-glass"></div>
+<div id="main">
+    <!--header S-->
+    <header>
+        <h1 class="fl-l">My Music</h1><span class="iconfont icon-yinle"></span>
+        <div id="face">
+            <div id="set">设置</div>
+        </div>
+    </header>
+    <!--header E-->
 
-<!--content S-->
-<div id="content" class="clearfix">
-    <!--歌曲列表-->
-    <div id="list" class="fl-l">
-        <ul>
-            <li data-num="3" class="on">欧美</li>
-            <li data-num="4">流行</li>
-            <li data-num="5">内地</li>
-            <li data-num="6">港台</li>
-            <li data-num="16">韩国</li>
-            <li data-num="17">日本</li>
-            <li data-num="26">热歌</li>
-            <li data-num="27">新歌</li>
-            <li data-num="28">网络歌</li>
-            <li data-num="32">音乐人</li>
-            <li data-num="36">k歌金曲</li>
-        </ul>
-    </div>
-    <div id="con" class="fl-l">
-        <div id="con-h" class="clearfix">
-            <ul class="clearfix fl-l">
-                <li class="fl-l">收藏</li>
-                <li class="fl-l">下载</li>
-                <li class="fl-l">删除</li>
-                <li class="fl-l">清空</li>
+    <!--content S-->
+    <div id="content" class="clearfix">
+        <!--歌曲列表-->
+        <div id="list" class="fl-l">
+            <ul>
+                <li data-num="3" class="on">欧美</li>
+                <li data-num="4">流行</li>
+                <li data-num="5">内地</li>
+                <li data-num="6">港台</li>
+                <li data-num="16">韩国</li>
+                <li data-num="17">日本</li>
+                <li data-num="26">热歌</li>
+                <li data-num="27">新歌</li>
+                <li data-num="28">网络歌</li>
+                <li data-num="32">音乐人</li>
+                <li data-num="36">k歌金曲</li>
             </ul>
-            <div id="search" class="fl-r">
-                <input id="search-input" type="text" placeholder="搜索歌曲名或歌手名">
-                <input id="btn" value="搜索" type="button"/>
-                <div id="searchList">
-                    <ol>
-                    </ol>
+        </div>
+        <div id="con" class="fl-l">
+            <div id="con-h" class="clearfix">
+                <ul class="clearfix fl-l">
+                    <li class="fl-l">收藏</li>
+                    <li class="fl-l">下载</li>
+                    <li class="fl-l">删除</li>
+                    <li class="fl-l">清空</li>
+                </ul>
+                <div id="search" class="fl-r">
+                    <input id="search-input" type="text" placeholder="搜索歌曲名或歌手名">
+                    <input id="btn" value="搜索" type="button"/>
+                    <div id="searchList">
+                        <ol>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div id="con-con">
+                <ul id="song-list">
+                    <li class="song-header">
+                        <div class="check fl-l" >
+                            <div class="checkbox">
+                                <input type="checkbox">
+                            </div>
+                        </div>
+                        <div class="song fl-l">
+                            <span class="song-num"></span>
+                            <span class="song-name">歌曲</span>
+                            <!--样板-->
+                            <!--<div class="none fl-r">-->
+                            <!--<span>播放</span>-->
+                            <!--<span>收藏</span>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="song-singer fl-l">歌手</div>
+                        <div class="song-time fl-r">专辑</div>
+                    </li>
+                </ul>
+                <ul id="song-list-info"></ul>
+                <!--自定义滚动条-->
+                <div id="scroll">
+                    <div class="bar"></div>
                 </div>
             </div>
         </div>
-        <div id="con-con">
-            <ul id="song-list">
-                <li class="song-header">
-                    <div class="check fl-l" >
-                        <div class="checkbox">
-                            <input type="checkbox">
-                        </div>
-                    </div>
-                    <div class="song fl-l">
-                        <span class="song-num"></span>
-                        <span class="song-name">歌曲</span>
-                        <!--样板-->
-                        <!--<div class="none fl-r">-->
-                            <!--<span>播放</span>-->
-                            <!--<span>收藏</span>-->
-                        <!--</div>-->
-                    </div>
-                    <div class="song-singer fl-l">歌手</div>
-                    <div class="song-time fl-r">专辑</div>
-                </li>
-            </ul>
-            <ul id="song-list-info"></ul>
-            <!--自定义滚动条-->
-            <div id="scroll">
-                <div class="bar"></div>
+        <div id="info" class="fl-l">
+            <div id="img">
+                <img src="img/bg.jpg"  alt="">
+                <img src="img/bg.jpg" alt="">
+            </div>
+            <div id="singer-album">
+                歌曲名：<p></p><br>
+                作者：<p></p><br>
+                专辑：<p></p><br>
+            </div>
+            <div id="lyric">
+                <div class="box">
+                </div>
             </div>
         </div>
     </div>
-    <div id="info" class="fl-l">
-        <div id="img">
-            <img src="img/1.jpg"  alt="">
-            <img src="img/1.jpg" alt="">
-        </div>
-        <div id="singer-album">
-            歌曲名：<p></p><br>
-            作者：<p></p><br>
-            专辑：<p></p><br>
-        </div>
-        <div id="lyric">
-            <div class="box">
+    <!--content E-->
+    <!--footer S-->
+    <footer>
+        <audio id="music" src="" controls autoplay></audio>
+        <div id="control">
+            <a href="javascript:;" title="上一曲" id="musicLeft" class="iconfont icon-preMusic"></a>
+            <a href="javascript:;" title="暂停/继续" id="musicMiddle" class="iconfont icon-bofang1"></a>
+            <a href="javascript:;" title="下一曲" id="musicRight" class="iconfont icon-shangyiqu101"></a>
+            <div id="progress">
+                <p></p><p></p><p></p><p></p>
+                <div class="progress">
+                    <div class="pot"></div>
+                </div>
+            </div>
+            <a href="javascript:;" title="单曲/循环" id="flag" class="iconfont icon-shunxu"></a>
+            <a href="javascript:;" title="下载" id="download" class="iconfont icon-xiazai"></a>
+            <div id="voice">
+                <a href="javascript:;"  id="voiceControl" title="音量" class="iconfont icon-ttpodicon"></a>
+                <div class="progress">
+                    <div class="pot"></div>
+                </div>
             </div>
         </div>
-    </div>
+    </footer>
+    <!--footer E-->
 </div>
-<!--content E-->
-<!--footer S-->
-<footer>
-    <audio id="music" src="" controls autoplay></audio>
-    <div id="control">
-        <a href="javascript:;" title="上一曲" id="musicLeft" class="iconfont icon-preMusic"></a>
-        <a href="javascript:;" title="暂停/继续" id="musicMiddle" class="iconfont icon-bofang1"></a>
-        <a href="javascript:;" title="下一曲" id="musicRight" class="iconfont icon-shangyiqu101"></a>
-        <div id="progress">
-            <p></p><p></p><p></p><p></p>
-            <div class="progress">
-                <div class="pot"></div>
-            </div>
-        </div>
-        <a href="javascript:;" title="单曲/循环" id="flag" class="iconfont icon-shunxu"></a>
-        <a href="javascript:;" title="下载" id="download" class="iconfont icon-xiazai"></a>
-        <div id="voice">
-            <a href="javascript:;"  id="voiceControl" title="音量" class="iconfont icon-ttpodicon"></a>
-            <div class="progress">
-                <div class="pot"></div>
-            </div>
-        </div>
-    </div>
-</footer>
-<!--footer E-->
 <script src="js/index.js"></script>
 </body>
 </html>
