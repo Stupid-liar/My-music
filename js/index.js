@@ -51,7 +51,9 @@ var $songway = $("#flag");
 
 //列表点击
 var $list = $("#list");
-//
+
+var show = 0;//存放正在播放的歌词p标签的index值
+
 var index;//当前播放的歌曲
 // 初始化默认欧美风格
 (function () {
@@ -405,58 +407,59 @@ function lyric(id) {
             lyric = data.showapi_res_body.lyric;
             lyric = HtmlDecode(lyric);//要进行转义
 
-            toLyric(lyric);
+            toLyric(lyric);//歌词格式化
             for(var i in array){
                 var $p = $("<p id='"+i+"'>"+array[i]+"</p>");
+                ellipsis($p,60);
                 $info.find("#lyric .box").eq(0).append($p);
             }
-            var $box = $info.find("#lyric .box");
-            var $lyric = $box.find("p");
-            var pH = $lyric.height();
+            show = 0;
             //歌词监听时间未完成
-            $music.on("timeupdate",function () {
-                var num = $music[0].currentTime;
-                // $lyric.eq(num).style.color = "#fff";
-                $lyric.each(function (i) {
-                    if($music[0].currentTime > this.id){
-                        $(this).css({
-                            color: '#ffffff',
-                            fontSize: "20px"
-                        });
-                        $box.css({
-                            top: -num*pH+400
-                        });
-                    }
-                });
-            })
+
         }
     })
 }
 
+$music.on("timeupdate",function () {
+    var $box = $info.find("#lyric .box");
+    var $lyric = $box.find("p");
+    var pH = $lyric.height();
 
+    $lyric.each(function () {
+        if( Math.abs( $music[0].currentTime - this.id ) < 0.3){
+            show = $(this).index();
+        }
+    });
+    $lyric.eq(show).addClass("on").siblings().removeClass("on");
+    $box.css({
+        top: - ( $lyric.eq(show).position().top + pH - 200)//当前歌词的位置加上40px
+    });
+});
 //存放歌词
-var array = [];
+var array = {};
 //歌词处理部分
 function toLyric(data) {
-    array = [];
+    array = {};
     /*歌词处理*/
-    var str1 = data.split("[");
-    var str2 = [];
-    var str3 = [];
+    var str1 = data.split("[");//时间和歌词
+    var str2 = [];//存放时间
+    var str3 = [];//存放歌词
     str1.splice(0,6);//去掉前六个无用数据
 
     for(var i = 0;i< str1.length;i++){
         str1[i] = str1[i].split("]");
-        str2[i] = str1[i][0].split(":")//存放时间
+        str2[i] = str1[i][0].split(":");//存放时间
         str3[i] = str1[i][1];
-        array[(str2[i][0]*60 + parseFloat(str2[i][1]))] = str1[i][1];
+        var num = parseInt((str2[i][0]*60 + parseFloat(str2[i][1])));
+        // console.log(num);
+        array[num] = str1[i][1];
 
     }
-    var first;
-    for(i = 0; i<str2.length;i++){
-        first = str2[i][0]*60 + parseInt(str2[i][1]);
-        array[first] = str3[i];
-    }
+    // var first;//歌词json数据的key
+    // for(i = 0; i<str2.length;i++){
+    //     first = str2[i][0]*60 + parseInt(str2[i][1]);
+    //     array[first] = str3[i];
+    // }
 }
 
 //传递秒数返回时间

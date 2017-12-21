@@ -19,8 +19,8 @@ header h1{
     line-height: 100px;
     text-indent: 2rem;
     margin-right: 10px;
-    font-family: 华文仿宋;
     color: #dddddd;
+    font-size: 26px;
 }
 header h1:hover{
     color: #ffffff;
@@ -309,8 +309,11 @@ header span{
     right: 0;
     margin: 220px auto;
     text-align: center;
-    color: #ffffff;
+    color: #c7c6d4;
     font-size: 16px;
+}
+#singer-album p:hover{
+    color: #ffffff;
 }
 #singer-album p{
     display: inline-block;
@@ -339,6 +342,12 @@ header span{
     line-height: 40px;
     text-align: center;
     color: #c7c6d4;
+    transition: 1s;
+}
+#lyric p.on{
+    color: #ffffff;
+    font-size: 18px;
+    transform: translateZ(10px);
 }
 
 /*footer S*/
