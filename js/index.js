@@ -27,7 +27,8 @@ var $btn = $("#btn"),//搜索按钮
     $Pprogress = $progress.find(".progress").eq(0),//存放进度条的进度
     PW = $Pprogress.width(),//进度条的宽度
     $Ppot = $Pprogress.find(".pot").eq(0),//进度条上的点
-    $img = $("#img");//两个图片
+    $img = $("#img"),//两个图片
+    $set = $("#set");//纯净模式按钮
 
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
@@ -44,6 +45,7 @@ var maxNum,//存放长度，太长则显示省略号
 var way = true, //true顺序。false，单曲
     flag = true,//音量开关
     stop = false,// 暂停，true为可暂停，false表示已经暂停不可以在暂停
+    leftRight = true,//纯净模式开关（改变背景颜色）
     end = 110;//记录声音节点结束位置(控制音量)(初始值可调节0~200左右视屏幕大小改变而改变)
 
 //js滚动条（自动滚动条，没来的及写jq,把之前的js拿来用了）
@@ -325,6 +327,26 @@ $songway.click(function () {
     way?$songway.prop("class","iconfont icon-danquxunhuan"):$songway.prop("class","iconfont  icon-shunxu");
     way = !way;
 });
+//纯净模式按妞事件
+$set.find(".small").click(function () {
+    $li = $songListInfo.find("li");
+    if(leftRight){
+        $set.find(".small").css({
+            marginLeft: "50%"
+        })
+        $("body").css({
+            backgroundImage: "url('img/bg.jpg')"
+        })
+    }else {
+        $set.find(".small").css({
+            marginLeft: 0
+        })
+        $("body").css({
+            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+        })
+    }
+    leftRight = !leftRight;
+})
 
 
 /*音乐监听函数*/
@@ -675,27 +697,8 @@ function voice() {
 }
 
 
-var $set = $("#set");
-var leftRight = true;
-$set.find(".small").click(function () {
-    $li = $songListInfo.find("li");
-    if(leftRight){
-        $set.find(".small").css({
-            marginLeft: "50%"
-        })
-        $("body").css({
-            backgroundImage: "url('img/bg.jpg')"
-        })
-    }else {
-        $set.find(".small").css({
-            marginLeft: 0
-        })
-        $("body").css({
-            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-        })
-    }
-    leftRight = !leftRight;
-})
+
+
 
 
 
