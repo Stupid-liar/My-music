@@ -20,7 +20,8 @@ header h1{
     text-indent: 2rem;
     margin-right: 10px;
     color: #dddddd;
-    font-size: 26px;
+    font-size: 24px;
+    font-weight: 400;
 }
 header h1:hover{
     color: #ffffff;
@@ -215,8 +216,7 @@ header span{
     height: 100%;
     position: relative;
 }
-#song-list li .check input,#song-list-info li .check input{
-    display: block;
+#song-list-info li .check .checkbox,#song-list li .check .checkbox {
     position: absolute;
     left: 0;
     right: 0;
@@ -225,6 +225,23 @@ header span{
     margin: auto;
     width: 20px;
     height: 20px;
+    border: 1px solid #c7c6d4;
+    cursor: pointer;
+}
+#song-list-info li .check .checkbox:hover,#song-list li .check .checkbox:hover{
+    border: 1px solid #ffffff;
+}
+#song-list-info li .check .oncheck,#song-list li .check .oncheck{
+    border: 1px solid #ffffff;
+    background: url("../img/icon.png")no-repeat -18px -197px/1000%;
+}
+#song-list li .check input,#song-list-info li .check input{
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
 }
 #song-list li .song,#song-list-info li .song{
     position: relative;
@@ -233,6 +250,8 @@ header span{
 #song-list li .song .song-num,#song-list-info li .song .song-num{
     position: absolute;
     left: -30px;
+    width: 10px;
+    height: 10px;
 }
 #song-list li .song-singer,#song-list-info li .song-singer{
     width: 25%;
@@ -323,7 +342,7 @@ header span{
     left: 0;
     right: 0;
     margin: 300px auto;
-    width: 60%;
+    width: 100%;
     height: 400px;
     overflow: hidden;
     /*border: 1px solid #ffffff;*/
@@ -382,19 +401,19 @@ footer #music{
     text-align: center;
 }
 #musicLeft{
-    left: 5%;
+    left: 0;
 }
 #musicMiddle{
-    left: 10%;
+    left: 5%;
 }
 #musicRight{
-    left: 15%;
+    left: 10%;
 }
 #progress{
     position: absolute;
     top: 0;
-    left: 20%;
-    width: 50%;
+    left: 15%;
+    width: 55%;
     height: 100%;
 }
 #progress p{

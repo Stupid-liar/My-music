@@ -7,7 +7,8 @@ var $btn = $("#btn"),
     $songListInfo = $("#song-list-info"),//显示歌
     $searchList = $("#searchList"),
     $music = $("#music"),
-    $play;
+    $play;//播放按钮
+var $oncheck;//存放选择按钮
 var oBox = document.getElementById("con-con");//歌曲查询显示部分
 var $info = $("#info");
 var $progress = $("#progress");//所有信息
@@ -33,7 +34,8 @@ var $next = $("#musicRight");
 
 var flag = true;//音量开关
 
-
+var $songList = $("#song-list");
+var $songListInfo = $("#song-list-info");//选中的项
 //音量
 var $voiveControl = $("#voiceControl");//音量控制
 var $voice = $("#voice");
@@ -41,7 +43,7 @@ var $progress2 = $voice.find(".progress").eq(0);//音量的进度条
 var $pot = $progress2.find(".pot").eq(0);
 var pW = $progress2.width();
 
-
+var maxNum;//存放长度，太长则显示省略号
 var timer;//定时器进度条
 
 var end = 110;//记录声音节点结束位置
@@ -118,7 +120,7 @@ $btn.click(function () {
     }
 });
 
-var maxNum;
+
 // 遍历数组显示歌单
 function init(musicArray) {
     $songListInfo.html("");
@@ -126,8 +128,10 @@ function init(musicArray) {
         musicArray[key].m4a = musicArray[key].m4a || musicArray[key].url;
         musicArray[key].albumname = musicArray[key].albumname || "";
         var $li = $("<li data-album='"+musicArray[key].albumname+"' data-id='"+musicArray[key].songid+"' data-pic='"+musicArray[key].albumpic_big+"' data-songSrc='"+musicArray[key].m4a+"' data-download='"+musicArray[key].downUrl+"' data-songId='"+musicArray[key].songid+"' data-songer='"+musicArray[key].singername+"' data-seconds='"+musicArray[key].seconds+"' data-songname='"+musicArray[key].songname+"'>\n" +
-            "                    <div class='check fl-l' >\n" +
-            "                        <input type='checkbox'>\n" +
+            "                    <div class='check fl-l'>\n" +
+            "                    <div class='checkbox'>\n" +
+            "                             <input type='checkbox'>\n" +
+            "                         </div>\n" +
             "                    </div>\n" +
             "                    <div class='song fl-l'>\n" +
             "                        <span class='song-num'>" + (parseInt(key) + 1) + "</span>\n" +
@@ -155,6 +159,12 @@ function init(musicArray) {
         $stop.prop("class","iconfont icon-pause-20");
     });
     oContent.style.top = '50px';
+    //添加选中事件
+    $songList.find(".checkbox").removeClass("oncheck");//初始化全选按钮默认为空
+    $oncheck =  $songListInfo.find(".checkbox");
+    $oncheck.click(function () {
+        $(this).toggleClass("oncheck");
+    })
 }
 
 //长度太长自动截取后面后面省略
@@ -384,6 +394,17 @@ function songInfo(index) {
         // $info.find("#lyric .box").eq(0).html();
         lyric(id);//显示歌词部分
         voice();
+        //播放的动态提示条.gif动画
+        $li.find(".song-num").css({
+            background: "none",
+            textIndent: 0,
+            top: 0
+        });
+        $li.find(".song-num").eq(index).css({
+            background: "url('img/wave.gif')no-repeat 0 20%/100%",
+            textIndent: "-500px",
+            top: "40%"
+        })
     }
 }
 
@@ -408,14 +429,19 @@ function lyric(id) {
             lyric = HtmlDecode(lyric);//要进行转义
 
             toLyric(lyric);//歌词格式化
-            for(var i in array){
-                var $p = $("<p id='"+i+"'>"+array[i]+"</p>");
-                ellipsis($p,60);
-                $info.find("#lyric .box").eq(0).append($p);
+            if(array){
+                for(var i in array){
+                    var $p = $("<p id='"+i+"'>"+array[i]+"</p>");
+                    $info.find("#lyric .box").eq(0).append($p);
+                    // if($p.html().length > 10){
+                    //     //歌词太长还没想好~
+                    // }
+                }
+            }else {
+                $info.find("#lyric .box").eq(0).append($("<p>未找到</p>"));
             }
-            show = 0;
-            //歌词监听时间未完成
 
+            show = 0;//歌词条数从第一条开始
         }
     })
 }
@@ -432,7 +458,7 @@ $music.on("timeupdate",function () {
     });
     $lyric.eq(show).addClass("on").siblings().removeClass("on");
     $box.css({
-        top: - ( $lyric.eq(show).position().top + pH - 200)//当前歌词的位置加上40px
+        top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
     });
 });
 //存放歌词
@@ -451,15 +477,8 @@ function toLyric(data) {
         str2[i] = str1[i][0].split(":");//存放时间
         str3[i] = str1[i][1];
         var num = parseInt((str2[i][0]*60 + parseFloat(str2[i][1])));
-        // console.log(num);
         array[num] = str1[i][1];
-
     }
-    // var first;//歌词json数据的key
-    // for(i = 0; i<str2.length;i++){
-    //     first = str2[i][0]*60 + parseInt(str2[i][1]);
-    //     array[first] = str3[i];
-    // }
 }
 
 //传递秒数返回时间
@@ -474,12 +493,13 @@ function toSecond(time){
 function toTwo(num) {
     return num<10?"0"+num:num;
 }
+
 //切换音乐时声音的大小
 function voice() {
     var potL = $pot.position().left;
     var voice = potL/pW;
     flag?$music[0].volume = voice:$music[0].volume = 0;
-};
+}
 
 //调节音量大小
 (function () {
@@ -519,6 +539,7 @@ function voice() {
         flag = !flag;
     });
 })();
+
 //下载管理
 (function () {
     $download.click(function () {
@@ -575,7 +596,8 @@ function progress(time) {
             progress($li.eq(index).attr("data-seconds"));//添加进度
             $progress.find("p").eq(0).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
             $progress.find("p").eq(2).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
-            lyric($li.eq(index).attr("data-songid"))
+            lyric($li.eq(index).attr("data-songid"));
+            songInfo(index)
         }
     },1000);
     $Pprogress.click(function (e) {
@@ -587,11 +609,22 @@ function progress(time) {
         });
         $music[0].currentTime = x_/PW*time;
     });
-};
+}
 
 $songway.click(function () {
     way?$songway.prop("class","iconfont icon-danquxunhuan"):$songway.prop("class","iconfont  icon-shunxu");
     way = !way;
 });
 
-//歌曲播放时歌词和详细信息
+//选中操作
+(function () {
+    $songList.find(".checkbox").click(function () {
+        if($songList.find(".checkbox").hasClass("oncheck")){
+            $songListInfo.find(".checkbox").removeClass("oncheck");
+            $songList.find(".checkbox").removeClass("oncheck");
+        }else {
+            $songListInfo.find(".checkbox").addClass("oncheck");
+            $songList.find(".checkbox").addClass("oncheck");
+        }
+    })
+})();
