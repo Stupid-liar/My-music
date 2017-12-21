@@ -69,7 +69,166 @@ var oContent = $songListInfo[0],
         }
     });
 })();
+//初始化进度条，音量，下载，选中效果
+(function () {
+    //选中操作
+    $songList.find(".checkbox").click(function () {
+        if($songList.find(".checkbox").hasClass("oncheck")){
+            $songListInfo.find(".checkbox").removeClass("oncheck");
+            $songList.find(".checkbox").removeClass("oncheck");
+        }else {
+            $songListInfo.find(".checkbox").addClass("oncheck");
+            $songList.find(".checkbox").addClass("oncheck");
+        }
+    })
 
+
+    //下载管理
+    $download.click(function () {
+        alert("暂时未完成，无法下载~")
+    })
+
+
+    //进度控制
+    $Ppot.mousedown(function (e) {
+        var x = e.clientX;
+        var S = $Ppot.position().left; //初始位置
+        $music[0].pause();
+        $(document).mousemove(function (e) {
+            var eX = e.clientX;
+            var x_ = eX - x;
+            end = x_ + S;
+            end = Math.min(end,PW);
+            end = Math.max(end,0);
+            $Ppot.css({
+                left: end
+            });
+            $music[0].currentTime = (end/PW)*sumTime;
+            $Pprogress.css({
+                background: '-webkit-linear-gradient(left,red '+(end/PW) * 100/sumTime+'%, #ffffff '+(end/PW) * 100/sumTime+'%, #ffffff 100%)'
+            });
+        });
+        $(document).mouseup(function () {
+            $music[0].play();
+            $(document).off("mousemove");
+            $(document).off("mouseup");
+        });
+    });
+    $Pprogress.click(function (e) {
+        var x = e.clientX;
+        var PL = $Pprogress.offset().left;
+        var x_ = x - PL;
+        $Ppot.css({
+            left: x_
+        });
+        $music[0].currentTime = x_/PW*sumTime;
+        $Pprogress.css({
+            background: '-webkit-linear-gradient(left,red '+(x_/PW) * 100/sumTime+'%, #ffffff '+(x_/PW) * 100/sumTime+'%, #ffffff 100%)'
+        });
+    });
+
+
+    //调节音量大小
+    $pot.mousedown(function (e) {
+        var x = e.clientX;
+        var S = $pot.position().left; //初始位置
+        $(document).mousemove(function (e) {
+            var eX = e.clientX;
+            var x_ = eX - x;
+            end = x_ + S;
+            end = Math.min(end,pW);
+            end = Math.max(end,0);
+            $pot.css({
+                left: end
+            });
+            $music[0].volume = end/pW;
+            $progress2.css({
+                background: '-webkit-linear-gradient(left,red '+(end/pW) * 100+'%, #ffffff '+(end/PW) * 100+'%, #ffffff 100%)'
+            })
+        });
+        $(document).mouseup(function () {
+            $(document).off("mousemove");
+            $(document).off("mouseup");
+        });
+    });
+    $progress2.click(function (e) {
+        var x = e.clientX;
+        var PL = $progress2.offset().left;
+        var x_ = x - PL;
+        $pot.css({
+            left: x_
+        });
+        $progress2.css({
+            background: '-webkit-linear-gradient(left,red '+(x_/pW) * 100+'%, #ffffff '+(x_/pW) * 100+'%, #ffffff 100%)'
+        })
+        $music[0].volume = x_/pW ;
+    });
+    $voice.find("a").click(function () {
+        if(flag){
+            $music[0].volume = 0;
+            $voiveControl.prop("class","iconfont icon-jingyin");
+            $pot.css({
+                left: 0
+            });
+        }else {
+            $music[0].volume = end/pW || 1;
+            $voiveControl.prop("class","iconfont icon-ttpodicon");
+            $pot.css({
+                left: end
+            });
+        }
+        flag = !flag;
+    });
+})();
+
+
+/*搜索部分*/
+//搜索自动提示功能
+$searchInput.keyup(function (e) {
+    if(e && e.keyCode === 13){
+        $btn.click();
+        index = null;//切换列表index为空
+    }
+    var os = document.createElement("script");
+    $searchList.css({
+        'display':$searchInput.val()?"block":"none"
+    });
+    os.src = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&key="+$searchInput.val()+"&jsonpCallback=cdd";
+    document.body.appendChild(os);
+    os.onload = function(){
+        document.body.removeChild(this);
+    }
+});
+function cdd(json) {
+    var str;
+    var array = json['data'];
+    $searchList.find("ol").eq(0).html("");
+    for(var key in array){
+        str = "";
+        for(var i in array[key]["itemlist"]){
+            str = array[key]["itemlist"][i].name +"---"+ array[key]["itemlist"][i].singer ;
+            var $li = $("<li>"+str+"</li>");
+            $searchList.find("ol").eq(0).append($li);
+        }
+    }
+}
+//搜索之后点击查询
+$searchList.find("ol").eq(0).click(function (e) {
+    var target = e.target;
+    if(target.nodeName === "LI"){
+        var value = $(target).text();
+        $searchInput.val(value);
+        $btn.click();
+        $searchList.css({
+            display: 'none'
+        });
+    }
+    index = null;//切换列表index为空
+});
+
+
+
+/*点击事件*/
 //切换列表
 $list.click(function (e) {
     var e = e || window.event;
@@ -90,7 +249,6 @@ $list.click(function (e) {
         })
     }
 });
-
 // 点击查询功能
 $btn.click(function () {
     if ($searchInput.val()) {
@@ -117,7 +275,102 @@ $btn.click(function () {
         return false;
     }
 });
+//上一曲
+$prev.click(function () {
+    if(index === 0 ){
+        index = $li.length - 1;
+    }else{
+        index--;
+    }
+    $li.eq(index).attr("play",true).siblings().attr("play",false);
+    $music[0].src = $li.eq(index).attr("data-songSrc");
+    $("body").css({
+        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+    })
+    songInfo(index);
+});
+//下一曲
+$next.click(function () {
+    if(index === $li.length - 1 ){
+        index = 0;
+    }else {
+        index++;
+    }
+    $li.eq(index).attr("play",true).siblings().attr("play",false);
+    $music[0].src = $li.eq(index).attr("data-songSrc");
+    $("body").css({
+        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
+    })
+    songInfo(index);
+});
+//暂停
+$stop.click(function () {
+    if(stop){
+        $music[0].pause();
+        $stop.prop("class","iconfont icon-bofang1");
+        $img.find("img").removeClass("rotate");
+    }else {
+        $music[0].play();
+        $stop.prop("class","iconfont icon-pause-20");
+        $img.find("img").addClass("rotate");
+    }
+    stop = !stop;
+});
+//单曲和循环播放
+$songway.click(function () {
+    way?$songway.prop("class","iconfont icon-danquxunhuan"):$songway.prop("class","iconfont  icon-shunxu");
+    way = !way;
+});
 
+
+/*音乐监听函数*/
+//音乐添加时间更新歌词timeupdate,seeked和seeking事件监听播放源改变
+$music.on("timeupdate",function () {
+    //歌词部分
+    var $box = $info.find("#lyric .box");
+    var $lyric = $box.find("p");
+
+    $lyric.each(function () {
+        if( Math.abs( $music[0].currentTime - this.id ) < 0.3){
+            show = $(this).index();
+        }
+    });
+    $lyric.eq(show).addClass("on").siblings().removeClass("on");
+    $box.css({
+        top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
+    });
+    //进度控制
+
+    $Ppot.css({
+        left: $music[0].currentTime/sumTime*PW
+    });
+    $Pprogress.css({
+        background: '-webkit-linear-gradient(left,red '+$music[0].currentTime * 100/sumTime+'%, #ffffff '+$music[0].currentTime * 100/sumTime+'%, #ffffff 100%)'
+    });
+    var m = Math.floor($music[0].currentTime/60);
+    var s = parseInt($music[0].currentTime%60);
+    var time2 = toTwo(m)+":"+toTwo(s);//时间转换
+    $progress.find("p").eq(2).html(time2);
+
+    if($music[0].currentTime >= sumTime){
+        $Ppot.css({
+            left: 0
+        });
+        $Pprogress.css({
+            background: '#ffffff'
+        });
+        $li.eq(index).attr("play",false);
+        if(way){
+            index = (index === $li.length - 1)?0:index + 1;
+        }
+        $li.eq(index).attr("play",true);//设置当前为播放项
+        $music[0].src = $li.eq(index).attr("data-songSrc");
+        $progress.find("p").eq(1).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
+        $progress.find("p").eq(3).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
+        lyric($li.eq(index).attr("data-songid"));
+        songInfo(index)
+    }
+});
 $music.on("canplaythrough",function () {
     sumTime = $music[0].duration;
     if(isNaN(sumTime)){
@@ -126,6 +379,14 @@ $music.on("canplaythrough",function () {
     sumTime = $music[0].duration;
     sumTime = parseInt(sumTime);
 });
+//音乐播放异常,自动进入下一曲
+$music.on("error",function () {
+    $li = $songListInfo.find("li");
+    $play = $(".play");
+    (index === ($li.length - 1))?index = 0:index++;
+    $play.eq(index).click();
+});
+
 
 // 遍历数组显示歌单
 function init(musicArray) {
@@ -178,7 +439,6 @@ function init(musicArray) {
     })
 
 }
-
 //长度太长自动截取后面后面省略
 function ellipsis($obj,num) {
     maxNum = $obj.html();
@@ -276,7 +536,6 @@ function mousewheel(obj , Fn) {
     }
     document.onmousewheel!==undefined?obj.onmousewheel=eFn:obj.addEventListener('DOMMouseScroll',eFn,false);
 }
-
 //获取元素到文档的距离
 function offset(obj){
     var json = {
@@ -290,95 +549,6 @@ function offset(obj){
     }
     return json;
 }
-
-//搜索自动提示功能
-$searchInput.keyup(function (e) {
-    if(e && e.keyCode === 13){
-        $btn.click();
-        index = null;//切换列表index为空
-    }
-    var os = document.createElement("script");
-    $searchList.css({
-        'display':$searchInput.val()?"block":"none"
-    });
-    os.src = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&key="+$searchInput.val()+"&jsonpCallback=cdd";
-    document.body.appendChild(os);
-    os.onload = function(){
-        document.body.removeChild(this);
-    }
-});
-
-function cdd(json) {
-    var str;
-    var array = json['data'];
-    $searchList.find("ol").eq(0).html("");
-    for(var key in array){
-        str = "";
-        for(var i in array[key]["itemlist"]){
-            str = array[key]["itemlist"][i].name +"---"+ array[key]["itemlist"][i].singer ;
-            var $li = $("<li>"+str+"</li>");
-            $searchList.find("ol").eq(0).append($li);
-        }
-    }
-}
-
-//搜索之后点击查询
-$searchList.find("ol").eq(0).click(function (e) {
-    var target = e.target;
-    if(target.nodeName === "LI"){
-        var value = $(target).text();
-        $searchInput.val(value);
-        $btn.click();
-        $searchList.css({
-            display: 'none'
-        });
-    }
-    index = null;//切换列表index为空
-});
-
-$stop.click(function () {
-    if(stop){
-        $music[0].pause();
-        $stop.prop("class","iconfont icon-bofang1");
-        $img.find("img").removeClass("rotate");
-    }else {
-        $music[0].play();
-        $stop.prop("class","iconfont icon-pause-20");
-        $img.find("img").addClass("rotate");
-    }
-    stop = !stop;
-});
-
-//上一曲
-$prev.click(function () {
-    if(index === 0 ){
-        index = $li.length - 1;
-    }else{
-        index--;
-    }
-    $li.eq(index).attr("play",true).siblings().attr("play",false);
-    $music[0].src = $li.eq(index).attr("data-songSrc");
-    $("body").css({
-        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-    })
-    songInfo(index);
-});
-
-//下一曲
-$next.click(function () {
-    if(index === $li.length - 1 ){
-        index = 0;
-    }else {
-        index++;
-    }
-    $li.eq(index).attr("play",true).siblings().attr("play",false);
-    $music[0].src = $li.eq(index).attr("data-songSrc");
-    $("body").css({
-        backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-    })
-    songInfo(index);
-});
-
 // 时间音量下载和作者等信息和右侧信息
 function songInfo(index) {
     $li = $songListInfo.find("li");
@@ -419,14 +589,12 @@ function songInfo(index) {
         top: "40%"
     });
 }
-
 //歌词需要转码
 function HtmlDecode(str) {
     var div = document.createElement("div");
     div.innerHTML = str;
     return div.textContent || div.innerText;
 }
-
 //获取歌词
 function lyric(id) {
     var id = id;
@@ -461,55 +629,6 @@ function lyric(id) {
         }
     })
 }
-
-//音乐添加时间更新歌词timeupdate,seeked和seeking事件监听播放源改变
-$music.on("timeupdate",function () {
-    //歌词部分
-    var $box = $info.find("#lyric .box");
-    var $lyric = $box.find("p");
-
-    $lyric.each(function () {
-        if( Math.abs( $music[0].currentTime - this.id ) < 0.3){
-            show = $(this).index();
-        }
-    });
-    $lyric.eq(show).addClass("on").siblings().removeClass("on");
-    $box.css({
-        top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
-    });
-    //进度控制
-
-    $Ppot.css({
-        left: $music[0].currentTime/sumTime*PW
-    });
-    $Pprogress.css({
-        background: '-webkit-linear-gradient(left,red '+$music[0].currentTime * 100/sumTime+'%, #ffffff '+$music[0].currentTime * 100/sumTime+'%, #ffffff 100%)'
-    });
-    var m = Math.floor($music[0].currentTime/60);
-    var s = parseInt($music[0].currentTime%60);
-    var time2 = toTwo(m)+":"+toTwo(s);//时间转换
-    $progress.find("p").eq(2).html(time2);
-
-    if($music[0].currentTime >= sumTime){
-        $Ppot.css({
-            left: 0
-        });
-        $Pprogress.css({
-            background: '#ffffff'
-        });
-        $li.eq(index).attr("play",false);
-        if(way){
-            index = (index === $li.length - 1)?0:index + 1;
-        }
-        $li.eq(index).attr("play",true);//设置当前为播放项
-        $music[0].src = $li.eq(index).attr("data-songSrc");
-        $progress.find("p").eq(1).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
-        $progress.find("p").eq(3).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
-        lyric($li.eq(index).attr("data-songid"));
-        songInfo(index)
-    }
-});
-
 //歌词处理部分
 function toLyric(data) {
     array = {};
@@ -527,7 +646,6 @@ function toLyric(data) {
         array[num] = str1[i][1];
     }
 }
-
 //传递秒数返回时间
 function toSecond(time){
     var timerr;
@@ -540,7 +658,6 @@ function toSecond(time){
 function toTwo(num) {
     return num<10?"0"+num:num;
 }
-
 //切换音乐时声音的大小
 function voice() {
     var potL = $pot.position().left;
@@ -551,129 +668,13 @@ function voice() {
     })
 }
 
-//调节音量大小
-(function () {
-    $pot.mousedown(function (e) {
-        var x = e.clientX;
-        var S = $pot.position().left; //初始位置
-        $(document).mousemove(function (e) {
-            var eX = e.clientX;
-            var x_ = eX - x;
-            end = x_ + S;
-            end = Math.min(end,pW);
-            end = Math.max(end,0);
-            $pot.css({
-                left: end
-            });
-            $music[0].volume = end/pW;
-            $progress2.css({
-                background: '-webkit-linear-gradient(left,red '+(end/pW) * 100+'%, #ffffff '+(end/PW) * 100+'%, #ffffff 100%)'
-            })
-        });
-        $(document).mouseup(function () {
-            $(document).off("mousemove");
-            $(document).off("mouseup");
-        });
-    });
-    $progress2.click(function (e) {
-        var x = e.clientX;
-        var PL = $progress2.offset().left;
-        var x_ = x - PL;
-        $pot.css({
-            left: x_
-        });
-        $progress2.css({
-            background: '-webkit-linear-gradient(left,red '+(x_/pW) * 100+'%, #ffffff '+(x_/pW) * 100+'%, #ffffff 100%)'
-        })
-        $music[0].volume = x_/pW ;
-    });
-    $voice.find("a").click(function () {
-        if(flag){
-            $music[0].volume = 0;
-            $voiveControl.prop("class","iconfont icon-jingyin");
-            $pot.css({
-                left: 0
-            });
-        }else {
-            $music[0].volume = end/pW || 1;
-            $voiveControl.prop("class","iconfont icon-ttpodicon");
-            $pot.css({
-                left: end
-            });
-        }
-        flag = !flag;
-    });
-})();
 
-//下载管理
-(function () {
-    $download.click(function () {
-        alert("暂时未完成，无法下载~")
-    })
-})();
 
-//进度控制
-(function () {
-    $Ppot.mousedown(function (e) {
-        var x = e.clientX;
-        var S = $Ppot.position().left; //初始位置
-        $music[0].pause();
-        $(document).mousemove(function (e) {
-            var eX = e.clientX;
-            var x_ = eX - x;
-            end = x_ + S;
-            end = Math.min(end,PW);
-            end = Math.max(end,0);
-            $Ppot.css({
-                left: end
-            });
-            $music[0].currentTime = (end/PW)*sumTime;
-            $Pprogress.css({
-                background: '-webkit-linear-gradient(left,red '+(end/PW) * 100/sumTime+'%, #ffffff '+(end/PW) * 100/sumTime+'%, #ffffff 100%)'
-            });
-        });
-        $(document).mouseup(function () {
-            $music[0].play();
-            $(document).off("mousemove");
-            $(document).off("mouseup");
-        });
-    });
-    $Pprogress.click(function (e) {
-        var x = e.clientX;
-        var PL = $Pprogress.offset().left;
-        var x_ = x - PL;
-        $Ppot.css({
-            left: x_
-        });
-        $music[0].currentTime = x_/PW*sumTime;
-        $Pprogress.css({
-            background: '-webkit-linear-gradient(left,red '+(x_/PW) * 100/sumTime+'%, #ffffff '+(x_/PW) * 100/sumTime+'%, #ffffff 100%)'
-        });
-    });
-})();
 
-//单曲和循环播放
-$songway.click(function () {
-    way?$songway.prop("class","iconfont icon-danquxunhuan"):$songway.prop("class","iconfont  icon-shunxu");
-    way = !way;
-});
 
-//选中操作
-(function () {
-    $songList.find(".checkbox").click(function () {
-        if($songList.find(".checkbox").hasClass("oncheck")){
-            $songListInfo.find(".checkbox").removeClass("oncheck");
-            $songList.find(".checkbox").removeClass("oncheck");
-        }else {
-            $songListInfo.find(".checkbox").addClass("oncheck");
-            $songList.find(".checkbox").addClass("oncheck");
-        }
-    })
-})();
-//音乐播放异常,自动进入下一曲
-$music.on("error",function () {
-    $li = $songListInfo.find("li");
-    $play = $(".play");
-    (index === ($li.length - 1))?index = 0:index++;
-    $play.eq(index).click();
-});
+
+
+
+
+
+
