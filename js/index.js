@@ -507,6 +507,20 @@ function init(musicArray) {
         $img.find("img").addClass("rotate");//添加图片转动
         changeBg()
     });
+    //添加双击点击事件
+    $li = $songListInfo.find("li");
+    $li.dblclick(function () {
+        console.log(0);
+        var songSrc = $(this).attr("data-songSrc");
+        $music[0].src = songSrc;
+        index = $(this).index();
+        songInfo(index);
+        stop = true;//设置为可暂停
+        $stop.prop("class","iconfont icon-pause-20");
+        $Ppot.css({left: 0});
+        $img.find("img").addClass("rotate");//添加图片转动
+        changeBg()
+    })
     //添加收藏事件
     $love = $(".love");
     $love.click(function () {
