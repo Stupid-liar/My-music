@@ -333,17 +333,24 @@ $set.find(".small").click(function () {
     if(leftRight){
         $set.find(".small").css({
             marginLeft: "50%"
-        })
+        });
         $("body").css({
             backgroundImage: "url('img/bg.jpg')"
         })
     }else {
         $set.find(".small").css({
             marginLeft: 0
-        })
-        $("body").css({
-            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-        })
+        });
+        if(index) {
+            $("body").css({
+                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
+            })
+        }else {
+            $("body").css({
+                backgroundImage: "url('img/bg.jpg')"
+            })
+        }
+
     }
     leftRight = !leftRight;
 })
@@ -536,12 +543,14 @@ function scroll() {
         if( top > 0 ){
             $songList.css({
                 opacity: 0,
-                filter: "alpha(opacity:0)"
+                filter: "alpha(opacity:0)",
+                display: "none"
             })
         }else {
             $songList.css({
                 opacity: 1,
-                filter: "alpha(opacity:100)"
+                filter: "alpha(opacity:100)",
+                display: "block"
             })
         }
         //限定top的取值范围
