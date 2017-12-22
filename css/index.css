@@ -17,7 +17,7 @@ body{
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
-    background-color: rgba(0,0,0,.7);
+    background-color: rgba(0,0,0,.2);
 }
 /*背景毛玻璃*/
 .frosted-glass {
