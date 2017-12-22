@@ -267,6 +267,21 @@ $list.click(function (e) {
             var list = musicData;
             init(list);
             scroll();
+        }if("2" === src){
+            if(localStorage.getItem("loveMusic")){
+                var data = localStorage.getItem("loveMusic").split("-");
+                var list = [];
+                data.splice( 0 , 1 );
+                for(var i = 0;i<data.length; i++){
+                    list[i] = JSON.parse(data[i]);
+                }
+                console.log(list);
+                init(list);
+                scroll();
+            }else {
+                $songListInfo.html("");
+                $songListInfo.append($("<div style='width: 100%; height: 100%; text-align: center; line-height: 300px; font-size: 20px; color: #ffffff;'>暂时没有喜欢的歌曲，点击收藏添加~</div>"));
+            }
         }else {
             var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid='+src+'&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
             $.ajax({
@@ -479,7 +494,7 @@ function init(musicArray) {
     for (var key in musicArray) {
         musicArray[key].m4a = musicArray[key].m4a || musicArray[key].url;
         musicArray[key].albumname = musicArray[key].albumname || "";
-        var $li = $("<li data-album='"+musicArray[key].albumname+"' data-id='"+musicArray[key].songid+"'data-smallPic='"+musicArray[key].albumpic_small+"' data-pic='"+musicArray[key].albumpic_big+"' data-songSrc='"+musicArray[key].m4a+"' data-download='"+musicArray[key].downUrl+"' data-songId='"+musicArray[key].songid+"' data-songer='"+musicArray[key].singername+"' data-seconds='"+musicArray[key].seconds+"' data-songname='"+musicArray[key].songname+"'>\n" +
+        var $li = $("<li data-album='"+musicArray[key].albumname+"' data-id='"+musicArray[key].songid+"' data-smallPic='"+musicArray[key].albumpic_small+"' data-pic='"+musicArray[key].albumpic_big+"' data-songSrc='"+musicArray[key].m4a+"' data-download='"+musicArray[key].downUrl+"' data-songId='"+musicArray[key].songid+"' data-songer='"+musicArray[key].singername+"' data-seconds='"+musicArray[key].seconds+"' data-songname='"+musicArray[key].songname+"'>\n" +
             "                    <div class='check fl-l'>\n" +
             "                    <div class='checkbox'>\n" +
             "                             <input type='checkbox'>\n" +
@@ -490,7 +505,7 @@ function init(musicArray) {
             "                        <span class='song-name'>" + musicArray[key].songname + "</span>\n" +
             "                        <div class='none fl-r'>\n" +
             "                            <span class='play' data-src='" + musicArray[key].m4a + "'>播放</span>\n" +
-            "                            <span>收藏</span>\n" +
+            "                            <span class='love'>收藏</span>\n" +
             "                        </div>\n" +
             "                    </div>\n" +
             "                    <div class='song-singer fl-l'>" + musicArray[key].singername + "</div>\n" +
@@ -516,7 +531,32 @@ function init(musicArray) {
             })
         }
     });
-    oContent.style.top = '50px';
+    //添加收藏事件
+    $love = $(".love");
+    $love.click(function () {
+        var loveMusic = [];
+        var data = "";
+        if(localStorage.getItem("loveMusic")){
+             data = localStorage.getItem("loveMusic");
+        }
+        var obj = {
+            "m4a": $(this).parents("li").attr("data-songSrc"),
+            "songid": $(this).parents("li").attr("data-id"),
+            "songname": $(this).parents("li").attr("data-songname"),
+            "albumpic_big": $(this).parents("li").attr("data-pic"),
+            "albumpic_small": $(this).parents("li").attr("data-smallPic"),
+            "albumname": $(this).parents("li").attr("data-album"),
+            "downUrl": $(this).parents("li").attr("data-download"),
+            "singername": $(this).parents("li").attr("data-songer")
+        };
+        obj = JSON.stringify(obj);
+        data = data +"-"+ obj;
+        loveMusic.push(data);
+        localStorage.setItem("loveMusic",loveMusic);
+    });
+
+
+    oContent.style.top = '50px';//信息距离上50px距离
     //添加选中事件
     $songList.find(".checkbox").removeClass("oncheck");//初始化全选按钮默认为空
     $oncheck =  $songListInfo.find(".checkbox");
