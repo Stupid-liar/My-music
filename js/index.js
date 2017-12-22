@@ -13,6 +13,7 @@ var $btn = $("#btn"),//搜索按钮
     $music = $("#music"),//audio标签
     $stop = $("#musicMiddle"),
     $info = $("#info"),//右半部分歌曲歌词专辑显示部分
+    $con = $("#con"),//中间歌曲信息部分
     $progress = $("#progress"),//所有信息初始化
     $download = $("#download"),//下载按钮
     $prev = $("#musicLeft"),//上一曲
@@ -60,6 +61,34 @@ var oContent = $songListInfo[0],
 $(window).resize(function () {
     pW = $progress2.width();//音量进度条的宽度
     PW = $Pprogress.width();//进度条的宽度
+    var width = $(window).width();
+    if( width < 1400 && width > 1200){
+        $list.css({
+            display: "none"
+        });
+        $info.css({
+            display: "block"
+        });
+        $con.css({
+            width: "70%"
+        });
+        $info.css({
+            width: "30%"
+        })
+    }
+    if(width > 1400){
+        $info.css({
+            display: "block",
+            width: "30%"
+        });
+        $list.css({
+            display: "block",
+            width: "15%"
+        });
+        $con.css({
+            width: "55%"
+        })
+    }
 })
 
 //初始化,列表，进度条，音量，下载，选中效果
