@@ -80,7 +80,6 @@ var oContent = $songListInfo[0],
     //下载管理
     $download.click(function () {
         $li = $songListInfo.find("li");
-        this.download = $li.eq(index).attr("data-download");
         this.href = $li.eq(index).attr("data-songSrc");
     });
 
@@ -284,7 +283,6 @@ $prev.click(function () {
     }else{
         index--;
     }
-    $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
     if(leftRight){
         $("body").css({
@@ -300,7 +298,6 @@ $next.click(function () {
     }else {
         index++;
     }
-    $li.eq(index).attr("play",true).siblings().attr("play",false);
     $music[0].src = $li.eq(index).attr("data-songSrc");
     if(leftRight){
         $("body").css({
@@ -396,8 +393,8 @@ $music.on("timeupdate",function () {
     $box.css({
         top: - ( $lyric.eq(show).position().top + $lyric.eq(show).height() - 200)//当前歌词的位置加上200px
     });
-    //进度控制
 
+    //进度控制
     $Ppot.css({
         left: $music[0].currentTime/sumTime*PW
     });
@@ -408,6 +405,7 @@ $music.on("timeupdate",function () {
     var s = parseInt($music[0].currentTime%60);
     var time2 = toTwo(m)+":"+toTwo(s);//时间转换
     $progress.find("p").eq(2).html(time2);
+    $progress.find("p").eq(3).html(toSecond(sumTime));
 
     if($music[0].currentTime >= sumTime){
         $Ppot.css({
@@ -416,14 +414,11 @@ $music.on("timeupdate",function () {
         $Pprogress.css({
             background: '#ffffff'
         });
-        $li.eq(index).attr("play",false);
         if(way){
             index = (index === $li.length - 1)?0:index + 1;
         }
-        $li.eq(index).attr("play",true);//设置当前为播放项
         $music[0].src = $li.eq(index).attr("data-songSrc");
         $progress.find("p").eq(1).html($li.eq(index).attr("data-songname")+"---"+$li.eq(index).attr("data-songer"));//添加名字歌手信息
-        $progress.find("p").eq(3).html(toSecond($li.eq(index).attr("data-seconds")));//添加时间等信息
         lyric($li.eq(index).attr("data-songid"));
         songInfo(index)
     }
@@ -476,7 +471,6 @@ function init(musicArray) {
     $play.click(function () {
         var songSrc = this.dataset.src;
         $music[0].src = songSrc;
-        $(this).parents("li").attr("play",true).siblings().attr("play",false);//设置为播放
         index = $(this).parents("li").index();
         songInfo(index);
         stop = true;//设置为可暂停
@@ -611,18 +605,16 @@ function songInfo(index) {
     $li = $songListInfo.find("li");
     var songname = $li.eq(index).attr("data-songname");//歌曲名
     var name = $li.eq(index).attr("data-songer");//歌手
-    var time = $li.eq(index).attr("data-seconds");//歌曲时间
+    var time = $li.eq(index).attr("data-seconds");//歌曲时间(暂时没有用)
     var id = $li.eq(index).attr("data-songid");//歌曲id
     var pic = $li.eq(index).attr("data-pic");//歌曲图片
     var smallPic = $li.eq(index).attr("data-smallPic");//歌曲图片(小图)
     var album = $li.eq(index).attr("data-album") || "未知";//歌曲专辑
     var num = $li.eq(index).find(".song-num").text();
-    if( isNaN(time) ){time = sumTime;}//判断是否是NaN
-    var timerr = toSecond(time);
+    var download = $download.attr("href",$li.eq(index).attr("data-download"));//下载
     $progress.find("p").eq(0).html("当前播放：第"+num+"首");
     $progress.find("p").eq(1).html(songname+"---"+name);
-    $progress.find("p").eq(3).html(timerr);
-    //$download.attr("href",$li.eq(index).attr("data-download"));//下载出问题了暂时无法下载
+    $download.prop("download",download)
     $info.find("#img img").eq(0).prop("src",pic);
     $info.find("#img img").eq(1).prop("src",smallPic);
     $info.find("#singer-album p").eq(0).html(songname);
@@ -630,8 +622,7 @@ function songInfo(index) {
     $info.find("#singer-album p").eq(2).html(album);
     ellipsis($info.find("#singer-album p").eq(0),15);
     ellipsis($info.find("#singer-album p").eq(1),15);
-    ellipsis($info.find("#singer-album p").eq(2),15);
-    // $info.find("#lyric .box").eq(0).html();
+    ellipsis($info.find("#singer-album p").eq(2),15);//长度太长显示省略号
     lyric(id);//显示歌词部分
     voice();
     //播放的动态提示条.gif动画
