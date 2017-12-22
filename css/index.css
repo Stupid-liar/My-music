@@ -70,12 +70,12 @@ header span{
     position: absolute;
     right: 0;
     top: 0;
-    width: 10%;
+    width: 30%;
     height: 100%;
     font-size: 16px;
     color: #dddddd;
 }
-#set{
+#bg{
     position: absolute;
     left: 0;
     top: 0;
@@ -86,7 +86,18 @@ header span{
     border-radius: 50px;
     border: 2px solid #ffffff;
 }
-#set p:nth-child(1){
+#set{
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 60px;
+    height: 25%;
+    border-radius: 50px;
+    border: 2px solid #ffffff;
+}
+#set p:nth-child(1),#bg p:nth-child(1){
     position: absolute;
     left: -80px;
     top: -50%;
@@ -95,10 +106,10 @@ header span{
     line-height: 50px;
     color: #dddddd;
 }
-#set p:nth-child(1):hover{
+#set p:nth-child(1):hover,#bg p:nth-child(1):hover{
     color: #ffffff;
 }
-#set p:nth-child(2){
+#set p:nth-child(2),#bg p:nth-child(2){
     position: absolute;
     left: 0.5px;
     top: 0;
@@ -109,7 +120,7 @@ header span{
     color: #ffffff;
     font-weight: 700;
 }
-#set .small{
+#set .small,#bg .small{
     position: absolute;
     left: 0;
     top: 0;

@@ -29,7 +29,8 @@ var $btn = $("#btn"),//搜索按钮
     PW = $Pprogress.width(),//进度条的宽度
     $Ppot = $Pprogress.find(".pot").eq(0),//进度条上的点
     $img = $("#img"),//两个图片
-    $set = $("#set");//纯净模式按钮
+    $set = $("#set"),//纯净模式按钮
+    $bg = $("#bg");//背景开关按钮
 
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
@@ -46,7 +47,8 @@ var maxNum,//存放长度，太长则显示省略号
 var way = true, //true顺序。false，单曲
     flag = true,//音量开关
     stop = false,// 暂停，true为可暂停，false表示已经暂停不可以在暂停
-    leftRight = true,//纯净模式开关（改变背景颜色）
+    leftRight = true,//纯净模式开关（改变位置ture为可以改变）
+    bgflag = false,//true为有背景false表示没有背景显示默认背景
     end = 110;//记录声音节点结束位置(控制音量)(初始值可调节0~200左右视屏幕大小改变而改变)
 
 //js滚动条（自动滚动条，没来的及写jq,把之前的js拿来用了）
@@ -332,11 +334,7 @@ $prev.click(function () {
         index--;
     }
     $music[0].src = $li.eq(index).attr("data-songSrc");
-    if(leftRight){
-        $("body").css({
-            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-        })
-    }
+    changeBg();
     songInfo(index);
 });
 //下一曲
@@ -347,11 +345,7 @@ $next.click(function () {
         index++;
     }
     $music[0].src = $li.eq(index).attr("data-songSrc");
-    if(leftRight){
-        $("body").css({
-            backgroundImage: "url("+$li.eq(index).attr("data-pic")+")"
-        })
-    }
+    changeBg();
     songInfo(index);
 });
 //暂停
@@ -380,6 +374,33 @@ $set.find(".small").click(function () {
 $set.find("p").eq(0).click(function () {
     soft();
     leftRight = !leftRight;
+});
+//背景开关
+$bg.find(".small").click(function () {
+    if(!bgflag){
+        $bg.find(".small").css({
+            marginLeft: "50%"
+        });
+    }else {
+        $bg.find(".small").css({
+            marginLeft: 0
+        });
+    }
+    bgflag = !bgflag;
+    changeBg();
+});
+$bg.find("p").eq(0).click(function () {
+    if(!bgflag){
+        $bg.find(".small").css({
+            marginLeft: "50%"
+        });
+    }else {
+        $bg.find(".small").css({
+            marginLeft: 0
+        });
+    }
+    bgflag = !bgflag;
+    changeBg();
 });
 
 
@@ -483,11 +504,7 @@ function init(musicArray) {
         $stop.prop("class","iconfont icon-pause-20");
         $Ppot.css({left: 0});
         $img.find("img").addClass("rotate");//添加图片转动
-        if(leftRight){
-            $("body").css({
-                backgroundImage: "url("+$img.find("img").prop("src")+")"
-            })
-        }
+        changeBg()
     });
     //添加收藏事件
     $love = $(".love");
@@ -758,9 +775,6 @@ function soft() {
         $set.find(".small").css({
             marginLeft: "50%"
         });
-        $("body").css({
-            backgroundImage: "url('img/bg.jpg')"
-        });
         //左边和中间消失只显示歌词部分
         $list.css({
             opacity: "0",
@@ -785,15 +799,6 @@ function soft() {
         $set.find(".small").css({
             marginLeft: 0
         });
-        if(index) {
-            $("body").css({
-                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
-            })
-        }else {
-            $("body").css({
-                backgroundImage: "url('img/bg.jpg')"
-            })
-        }
         setTimeout(function () {
             $list.css({
                 display: "block"
@@ -815,7 +820,24 @@ function soft() {
         })
     }
 }
-
+function changeBg() {
+    $li = $songListInfo.find("li");
+    if(!bgflag){
+        $("body").css({
+            backgroundImage: "url('img/bg.jpg')"
+        });
+    }else {
+        if(index) {
+            $("body").css({
+                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
+            })
+        }else {
+            $("body").css({
+                backgroundImage: "url('img/bg.jpg')"
+            })
+        }
+    }
+}
 
 
 
