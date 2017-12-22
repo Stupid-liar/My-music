@@ -564,25 +564,21 @@ function scroll() {
 
     //设定bar和content的top值
     function setTop(top) {
-        if( top > 0 ){
-            $songList.css({
-                opacity: 0,
-                filter: "alpha(opacity:0)",
-                display: "none"
-            })
-        }else {
-            $songList.css({
-                opacity: 1,
-                filter: "alpha(opacity:100)",
-                display: "block"
-            })
-        }
         //限定top的取值范围
         top = Math.max(top , 0);
         top = Math.min(top , maxBTop);
         oBar.style.top = top + "px";
         //求出content的top
         var cTop = top*maxCtop / maxBTop;
+        if(isNaN(cTop) || cTop === 0){
+            $songList.css({
+                display: "block"
+            });
+        }else if(!isNaN(cTop)){
+            $songList.css({
+                display: "none"
+            });
+        }
         oContent.style.top = -cTop + 50 +  'px';
     }
 }
