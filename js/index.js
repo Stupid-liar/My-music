@@ -507,11 +507,11 @@ function init(musicArray) {
             "downUrl": $(this).parents("li").attr("data-download"),
             "singername": $(this).parents("li").attr("data-songer")
         };
-        var r = new RegExp(obj);
+        obj = JSON.stringify(obj);
+        var r = new RegExp('"songid":"'+$(this).parents("li").attr("data-id")+'"');//这里单引号用来和加号连接变量和最外面一层，里面双引号用来写json数据的引号，不可以混用
         if(r.test(data)){
             alert("这首歌已经添加过了！不用再重复添加了")
         }else {
-            obj = JSON.stringify(obj);
             data = data +"-"+ obj;
             loveMusic.push(data);
             localStorage.setItem("loveMusic",loveMusic);
