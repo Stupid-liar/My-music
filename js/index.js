@@ -56,15 +56,18 @@ var oContent = $songListInfo[0],
     oBoxHeight = oBox.clientHeight;
 
 
+//屏幕串口改变大小
+$(window).resize(function () {
+    pW = $progress2.width();//音量进度条的宽度
+    PW = $Pprogress.width();//进度条的宽度
+})
 
-// 初始化默认欧美风格
-(function () {
+//初始化,列表，进度条，音量，下载，选中效果
+$(function () {
+    //初始化,列表
     var list = musicData;
     init(list);
     scroll();
-})();
-//初始化进度条，音量，下载，选中效果
-(function () {
     //选中操作
     $songList.find(".checkbox").click(function () {
         if($songList.find(".checkbox").hasClass("oncheck")){
@@ -174,7 +177,7 @@ var oContent = $songListInfo[0],
         }
         flag = !flag;
     });
-})();
+});
 
 
 /*搜索部分*/
