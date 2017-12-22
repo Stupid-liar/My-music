@@ -350,10 +350,34 @@ $set.find(".small").click(function () {
                 backgroundImage: "url('img/bg.jpg')"
             })
         }
-
     }
     leftRight = !leftRight;
-})
+});
+$set.find("p").eq(0).click(function () {
+    $li = $songListInfo.find("li");
+    if(leftRight){
+        $set.find(".small").css({
+            marginLeft: "50%"
+        });
+        $("body").css({
+            backgroundImage: "url('img/bg.jpg')"
+        })
+    }else {
+        $set.find(".small").css({
+            marginLeft: 0
+        });
+        if(index) {
+            $("body").css({
+                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
+            })
+        }else {
+            $("body").css({
+                backgroundImage: "url('img/bg.jpg')"
+            })
+        }
+    }
+    leftRight = !leftRight;
+});
 
 
 /*音乐监听函数*/
