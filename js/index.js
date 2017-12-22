@@ -59,17 +59,9 @@ var oContent = $songListInfo[0],
 
 // 初始化默认欧美风格
 (function () {
-    var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid=3&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
-    $.ajax({
-        dataType: "json",
-        url: url,
-        type: "post",
-        success: function (data) {
-            var list = data.showapi_res_body.pagebean.songlist;
-            init(list);
-            scroll();
-        }
-    });
+    var list = musicData;
+    init(list);
+    scroll();
 })();
 //初始化进度条，音量，下载，选中效果
 (function () {
@@ -82,13 +74,15 @@ var oContent = $songListInfo[0],
             $songListInfo.find(".checkbox").addClass("oncheck");
             $songList.find(".checkbox").addClass("oncheck");
         }
-    })
+    });
 
 
     //下载管理
     $download.click(function () {
-        alert("暂时未完成，无法下载~")
-    })
+        $li = $songListInfo.find("li");
+        this.download = $li.eq(index).attr("data-download");
+        this.href = $li.eq(index).attr("data-songSrc");
+    });
 
 
     //进度控制
@@ -237,18 +231,24 @@ $list.click(function (e) {
     if(e.target.nodeName === "LI"){
         $(e.target).addClass("on").siblings().removeClass("on");
         var src = e.target.dataset.num;
-        var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid='+src+'&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
-        $.ajax({
-            dataType: "json",
-            url: url,
-            type: "post",
-            success: function (data) {
-                var list = data.showapi_res_body.pagebean.songlist;
-                init(list);
-                scroll();
-                index = null;//切换列表是index复制为空
-            }
-        })
+        if("1" === src){
+            var list = musicData;
+            init(list);
+            scroll();
+        }else {
+            var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid='+src+'&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
+            $.ajax({
+                dataType: "json",
+                url: url,
+                type: "post",
+                success: function (data) {
+                    var list = data.showapi_res_body.pagebean.songlist;
+                    init(list);
+                    scroll();
+                    index = null;//切换列表是index复制为空
+                }
+            })
+        }
     }
 });
 // 点击查询功能
