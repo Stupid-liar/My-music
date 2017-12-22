@@ -507,10 +507,15 @@ function init(musicArray) {
             "downUrl": $(this).parents("li").attr("data-download"),
             "singername": $(this).parents("li").attr("data-songer")
         };
-        obj = JSON.stringify(obj);
-        data = data +"-"+ obj;
-        loveMusic.push(data);
-        localStorage.setItem("loveMusic",loveMusic);
+        var r = new RegExp(obj);
+        if(r.test(data)){
+            alert("这首歌已经添加过了！不用再重复添加了")
+        }else {
+            obj = JSON.stringify(obj);
+            data = data +"-"+ obj;
+            loveMusic.push(data);
+            localStorage.setItem("loveMusic",loveMusic);
+        }
     });
 
 
