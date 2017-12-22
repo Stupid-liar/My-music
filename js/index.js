@@ -30,7 +30,11 @@ var $btn = $("#btn"),//搜索按钮
     $Ppot = $Pprogress.find(".pot").eq(0),//进度条上的点
     $img = $("#img"),//两个图片
     $set = $("#set"),//纯净模式按钮
-    $bg = $("#bg");//背景开关按钮
+    $bg = $("#bg"),//背景开关按钮
+    $headLove = $("#headLove"),
+    $headDown = $("#headDown"),
+    $headDelete = $("#headDelete"),
+    $headEmpty = $("#headEmpty");//信息头四个按钮
 
 /*存储变量（存储和音乐播放相关信息）*/
 var maxNum,//存放长度，太长则显示省略号
@@ -259,6 +263,33 @@ $searchList.find("ol").eq(0).click(function (e) {
 
 
 /*点击事件*/
+//添加喜欢
+$headLove.click(function () {
+
+});
+//添加下载
+$headDown.click(function () {
+
+});
+//添加删除
+$headDelete.click(function () {
+    var listNum = $list.find("on").index();
+    if(2 === listNum){
+
+    }
+});
+//清空当前列表
+$headEmpty.click(function () {
+    var listNum = $list.find(".on").index();
+    if(1 === listNum){
+        localStorage.removeItem("loveMusic");
+        $songListInfo.html("");
+        $songListInfo.append($("<div style='width: 100%; height: 100%; text-align: center; line-height: 300px; font-size: 20px; color: #ffffff;'>暂时没有喜欢的歌曲，点击收藏添加~</div>"));
+    }else {
+        $songListInfo.html("");
+        $songListInfo.append($("<div style='width: 100%; height: 100%; text-align: center; line-height: 300px; font-size: 20px; color: #ffffff;'>已经清除当前列表，刷新可重新显示~</div>"));
+    }
+});
 //切换列表
 $list.click(function (e) {
     var e = e || window.event;
@@ -277,7 +308,6 @@ $list.click(function (e) {
                 for(var i = 0;i<data.length; i++){
                     list[i] = JSON.parse(data[i]);
                 }
-                console.log(list);
                 init(list);
                 scroll();
             }else {
