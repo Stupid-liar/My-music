@@ -484,6 +484,7 @@ function init(musicArray) {
             "                        <span class='song-name'>" + musicArray[key].songname + "</span>\n" +
             "                        <div class='none fl-r'>\n" +
             "                            <span class='play' data-src='" + musicArray[key].m4a + "'>播放</span>\n" +
+            "                            <span><a href='" + musicArray[key].m4a + "' download='" + musicArray[key].downUrl + "'>下载</a></span>\n" +
             "                            <span class='love'>收藏</span>\n" +
             "                        </div>\n" +
             "                    </div>\n" +
@@ -820,6 +821,7 @@ function soft() {
         })
     }
 }
+//背景切换的效果
 function changeBg() {
     $li = $songListInfo.find("li");
     if(!bgflag){
