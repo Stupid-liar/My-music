@@ -130,8 +130,12 @@ header span{
     height: 700px;
 }
 #list{
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 15%;
     height: 100%;
+    transition: 1s;
 }
 #list ul{
     box-sizing: border-box;
@@ -162,9 +166,12 @@ header span{
 
 /*内容中间*/
 #con{
-    position: relative;
+    position: absolute;
+    left: 15%;
+    top: 0;
     width: 55%;
     height: 700px;
+    transition: 1s;
 }
 #con-h{
     width: 100%;
@@ -377,9 +384,12 @@ header span{
 
 /*播放显示部分*/
 #info{
-    position: relative;
+    position: absolute;
+    right: 0;
+    top: 0;
     width: 30%;
     height: 100%;
+    transition: 1s;
 }
 #img{
     position: absolute;

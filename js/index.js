@@ -374,53 +374,11 @@ $songway.click(function () {
 });
 //纯净模式按妞事件
 $set.find(".small").click(function () {
-    $li = $songListInfo.find("li");
-    if(leftRight){
-        $set.find(".small").css({
-            marginLeft: "50%"
-        });
-        $("body").css({
-            backgroundImage: "url('img/bg.jpg')"
-        })
-    }else {
-        $set.find(".small").css({
-            marginLeft: 0
-        });
-        if(index) {
-            $("body").css({
-                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
-            })
-        }else {
-            $("body").css({
-                backgroundImage: "url('img/bg.jpg')"
-            })
-        }
-    }
+    soft();
     leftRight = !leftRight;
 });
 $set.find("p").eq(0).click(function () {
-    $li = $songListInfo.find("li");
-    if(leftRight){
-        $set.find(".small").css({
-            marginLeft: "50%"
-        });
-        $("body").css({
-            backgroundImage: "url('img/bg.jpg')"
-        })
-    }else {
-        $set.find(".small").css({
-            marginLeft: 0
-        });
-        if(index) {
-            $("body").css({
-                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
-            })
-        }else {
-            $("body").css({
-                backgroundImage: "url('img/bg.jpg')"
-            })
-        }
-    }
+    soft();
     leftRight = !leftRight;
 });
 
@@ -788,7 +746,70 @@ function voice() {
         background: '-webkit-linear-gradient(left,red '+voice * 100+'%, #ffffff '+voice * 100+'%, #ffffff 100%)'
     })
 }
-
+//纯净模式的点击效果
+function soft() {
+    $li = $songListInfo.find("li");
+    if(leftRight){
+        $set.find(".small").css({
+            marginLeft: "50%"
+        });
+        $("body").css({
+            backgroundImage: "url('img/bg.jpg')"
+        });
+        //左边和中间消失只显示歌词部分
+        $list.css({
+            opacity: "0",
+            filter: "alpha(opacity: 0)"
+        });
+        $con.css({
+            opacity: "0",
+            filter: "alpha(opacity: 0)"
+        });
+        $info.css({
+            right: "35%"
+        });
+        setTimeout(function () {
+            $list.css({
+                display: "none"
+            });
+            $con.css({
+                display: "none"
+            });
+        },1000)
+    }else {
+        $set.find(".small").css({
+            marginLeft: 0
+        });
+        if(index) {
+            $("body").css({
+                backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
+            })
+        }else {
+            $("body").css({
+                backgroundImage: "url('img/bg.jpg')"
+            })
+        }
+        setTimeout(function () {
+            $list.css({
+                display: "block"
+            });
+            $con.css({
+                display: "block"
+            });
+        },500);
+        $list.css({
+            opacity: "1",
+            filter: "alpha(opacity: 100)"
+        });
+        $con.css({
+            opacity: "1",
+            filter: "alpha(opacity: 100)"
+        });
+        $info.css({
+            right: 0
+        })
+    }
+}
 
 
 
