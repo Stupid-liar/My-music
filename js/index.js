@@ -62,6 +62,7 @@ $(window).resize(function () {
     pW = $progress2.width();//音量进度条的宽度
     PW = $Pprogress.width();//进度条的宽度
     var width = $(window).width();
+    $("#face").css({right: 0})
     if( width < 1400 && width > 1200){
         $list.css({
             display: "none"
