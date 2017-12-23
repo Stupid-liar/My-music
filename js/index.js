@@ -273,6 +273,7 @@ $headLove.click(function () {
     var r;
     var loveMusic = [];
     var data = "";
+    var chongfu = false;
     $li.each(function () {
         if($(this).find("input").is(":checked")){
             loveMusic = [];
@@ -292,9 +293,9 @@ $headLove.click(function () {
             obj = JSON.stringify(obj);
             r = new RegExp('"songid":"'+$(this).attr("data-id")+'"');//这里单引号用来和加号连接变量和最外面一层，里面双引号用来写json数据的引号，不可以混用
             if(r.test(data)){
-                alert("这首歌已经添加过了！不用再重复添加了")
+                chongfu = true;
             }else {
-                data = data +"-"+ obj;
+                data = data +"---"+ obj;
                 loveMusic.push(data);
                 localStorage.setItem("loveMusic",loveMusic);
             }
@@ -304,6 +305,9 @@ $headLove.click(function () {
         alert("请选择需要收藏的歌曲~")
     }else {
         alert("收藏成功~可在收藏列表中查看~")
+    }
+    if(chongfu){
+        alert("已经帮你过滤掉重复歌曲~");
     }
 });
 //添加下载
@@ -333,9 +337,19 @@ $headDown.click(function () {
 });
 //添加删除
 $headDelete.click(function () {
-    var listNum = $list.find("on").index();
-    if(2 === listNum){
-
+    $li = $songListInfo.find("li");
+    var Null = true;//判断是否为空（没有选中的li）true为是空
+    $li.each(function () {
+        if($(this).find("input").is(":checked")){
+            Null = false;
+            $(this).nextAll().find(".song-num").each(function () {
+                $(this).text( $(this).text() - 1);
+            });
+            $(this).remove();//移除节点并消失元素显示
+        }
+    });
+    if(Null){
+        alert("请选择需要删除的项目");
     }
 });
 //清空当前列表
@@ -357,17 +371,15 @@ $list.click(function (e) {
         $(e.target).addClass("on").siblings().removeClass("on");
         var src = e.target.dataset.num;
         if("1" === src){
-            console.log(0);
             var list1 = musicData;
             init(list1);
             scroll();
             return;
         }if("2" === src){
             if(localStorage.getItem("loveMusic")){
-                var data = localStorage.getItem("loveMusic").split("-");
+                var data = localStorage.getItem("loveMusic").split("---");
                 var list2 = [];
                 data.splice( 0 , 1 );
-                console.log(data);
                 for(var i = 0;i<data.length; i++){
                     list2[i] = JSON.parse(data[i]);
                 }
@@ -639,7 +651,7 @@ function init(musicArray) {
         if(r.test(data)){
             alert("这首歌已经添加过了！不用再重复添加了")
         }else {
-            data = data +"-"+ obj;
+            data = data +"---"+ obj;
             loveMusic.push(data);
             localStorage.setItem("loveMusic",loveMusic);
             alert("收藏成功~可在收藏列表中查看~")
