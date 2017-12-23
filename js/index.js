@@ -954,7 +954,7 @@ function changeBg() {
             backgroundImage: "url('img/bg.jpg')"
         });
     }else {
-        if(index) {
+        if(index + 1) {
             $("body").css({
                 backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
             })
