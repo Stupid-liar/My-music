@@ -269,7 +269,42 @@ $searchList.find("ol").eq(0).click(function (e) {
 /*点击事件*/
 //添加喜欢
 $headLove.click(function () {
-
+    $li = $songListInfo.find("li");
+    var r;
+    var loveMusic = [];
+    var data = "";
+    $li.each(function () {
+        if($(this).find("input").is(":checked")){
+            loveMusic = [];
+            if(localStorage.getItem("loveMusic")){
+                data = localStorage.getItem("loveMusic");
+            }
+            var obj = {
+                "m4a": $(this).attr("data-songSrc"),
+                "songid": $(this).attr("data-id"),
+                "songname": $(this).attr("data-songname"),
+                "albumpic_big": $(this).attr("data-pic"),
+                "albumpic_small": $(this).attr("data-smallPic"),
+                "albumname": $(this).attr("data-album"),
+                "downUrl": $(this).attr("data-download"),
+                "singername": $(this).attr("data-songer")
+            };
+            obj = JSON.stringify(obj);
+            r = new RegExp('"songid":"'+$(this).attr("data-id")+'"');//这里单引号用来和加号连接变量和最外面一层，里面双引号用来写json数据的引号，不可以混用
+            if(r.test(data)){
+                alert("这首歌已经添加过了！不用再重复添加了")
+            }else {
+                data = data +"-"+ obj;
+                loveMusic.push(data);
+                localStorage.setItem("loveMusic",loveMusic);
+            }
+        }
+    });
+    if(loveMusic.length === 0){
+        alert("请选择需要收藏的歌曲~")
+    }else {
+        alert("收藏成功~可在收藏列表中查看~")
+    }
 });
 //添加下载
 $headDown.click(function () {
@@ -322,23 +357,27 @@ $list.click(function (e) {
         $(e.target).addClass("on").siblings().removeClass("on");
         var src = e.target.dataset.num;
         if("1" === src){
-            var list = musicData;
-            init(list);
+            console.log(0);
+            var list1 = musicData;
+            init(list1);
             scroll();
+            return;
         }if("2" === src){
             if(localStorage.getItem("loveMusic")){
                 var data = localStorage.getItem("loveMusic").split("-");
-                var list = [];
+                var list2 = [];
                 data.splice( 0 , 1 );
+                console.log(data);
                 for(var i = 0;i<data.length; i++){
-                    list[i] = JSON.parse(data[i]);
+                    list2[i] = JSON.parse(data[i]);
                 }
-                init(list);
+                init(list2);
                 scroll();
             }else {
                 $songListInfo.html("");
                 $songListInfo.append($("<div style='width: 100%; height: 100%; text-align: center; line-height: 300px; font-size: 20px; color: #ffffff;'>暂时没有喜欢的歌曲，点击收藏添加~</div>"));
             }
+            return;
         }else {
             var url = 'https://route.showapi.com/213-4?showapi_appid=52163&showapi_test_draft=false&topid='+src+'&showapi_sign=3548a74ec5c34e9b9b0e77b83499e59d';
             $.ajax({
@@ -346,12 +385,13 @@ $list.click(function (e) {
                 url: url,
                 type: "post",
                 success: function (data) {
-                    var list = data.showapi_res_body.pagebean.songlist;
-                    init(list);
+                    var list3 = data.showapi_res_body.pagebean.songlist;
+                    init(list3);
                     scroll();
                     index = null;//切换列表是index复制为空
                 }
             })
+            return;
         }
     }
 });
@@ -602,6 +642,7 @@ function init(musicArray) {
             data = data +"-"+ obj;
             loveMusic.push(data);
             localStorage.setItem("loveMusic",loveMusic);
+            alert("收藏成功~可在收藏列表中查看~")
         }
     });
 
