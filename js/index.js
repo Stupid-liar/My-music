@@ -561,11 +561,6 @@ $music.on("timeupdate",function () {
         lyric($li.eq(index).attr("data-songid"));
         songInfo(index)
     }
-    if(index > 5){
-        $songListInfo.css({
-            top: -$songListInfo.find("li").eq(index - 5).position().top
-        })
-    }
 });
 $music.on("canplaythrough",function () {
     sumTime = $music[0].duration;
