@@ -617,7 +617,6 @@ function init(musicArray) {
     //添加双击点击事件
     $li = $songListInfo.find("li");
     $li.dblclick(function () {
-        console.log(0);
         var songSrc = $(this).attr("data-songSrc");
         $music[0].src = songSrc;
         index = $(this).index();
@@ -792,7 +791,7 @@ function songInfo(index) {
     var download = $download.attr("href",$li.eq(index).attr("data-download"));//下载
     $progress.find("p").eq(0).html("当前播放：第"+num+"首");
     $progress.find("p").eq(1).html(songname+"---"+name);
-    $download.prop("download",download)
+    $download.prop("download",download);
     $info.find("#img img").eq(0).prop("src",pic);
     $info.find("#img img").eq(1).prop("src",smallPic);
     $info.find("#singer-album p").eq(0).html(songname);
@@ -841,9 +840,6 @@ function lyric(id) {
                 for(var i in array){
                     var $p = $("<p id='"+i+"'>"+array[i]+"</p>");
                     $info.find("#lyric .box").eq(0).append($p);
-                    // if($p.html().length > 10){
-                    //     //歌词太长还没想好~
-                    // }
                 }
             }else {
                 $info.find("#lyric .box").eq(0).append($("<p>未找到</p>"));
