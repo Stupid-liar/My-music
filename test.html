@@ -17,8 +17,12 @@
 <a href="http://ws.stream.qqmusic.qq.com/498307.m4a?fromtag=46" download="http://dl.stream.qqmusic.qq.com/498307.m4a?vkey=F3CD2E4712C0954D03BD05077F6F2675CF0753FFA949AF2C37AAF9FDC3326671F5466619EC1E681A70E4B3EFCD50DF2F3B194C27C1279080&guid=2718671044">xiazai</a>
 
 <script>
-    localStorage.removeItem("loveMusic")
-    console.log(localStorage.getItem("music"));//1,2,3
+    var a = document.createElement("a");
+    a.href = "http://ws.stream.qqmusic.qq.com/498307.m4a?fromtag=46";
+    a.download = "http://dl.stream.qqmusic.qq.com/498307.m4a?vkey=F3CD2E4712C0954D03BD05077F6F2675CF0753FFA949AF2C37AAF9FDC3326671F5466619EC1E681A70E4B3EFCD50DF2F3B194C27C1279080&guid=2718671044";
+//    document.body.appendChild(a)
+    a.click()
+
 </script>
 </body>
 </html>

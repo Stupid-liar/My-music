@@ -106,12 +106,16 @@ $(function () {
     scroll();
     //选中操作
     $songList.find(".checkbox").click(function () {
-        if($songList.find(".checkbox").hasClass("oncheck")){
+        if($songList.find(".checkbox input").attr("checked") === "checked"){
             $songListInfo.find(".checkbox").removeClass("oncheck");
             $songList.find(".checkbox").removeClass("oncheck");
+            $songListInfo.find(".checkbox input").prop("checked",false);
+            $songList.find("li input").attr("checked", false);
         }else {
             $songListInfo.find(".checkbox").addClass("oncheck");
             $songList.find(".checkbox").addClass("oncheck");
+            $songList.find(".checkbox input").attr("checked", true);
+            $songListInfo.find(".checkbox input").prop("checked",true);
         }
     });
 
@@ -194,7 +198,7 @@ $(function () {
         });
         $progress2.css({
             background: '-webkit-linear-gradient(left,red '+(x_/pW) * 100+'%, #ffffff '+(x_/pW) * 100+'%, #ffffff 100%)'
-        })
+        });
         $music[0].volume = x_/pW ;
     });
     $voice.find("a").click(function () {
@@ -269,7 +273,28 @@ $headLove.click(function () {
 });
 //添加下载
 $headDown.click(function () {
-
+    $li = $songListInfo.find("li");
+    var array = [];
+    $li.each(function () {
+        if($(this).find("input").is(":checked")){
+            var json = {
+                "m4a": ""+$(this).attr("data-songSrc")+"",
+                "downUrl": ""+$(this).attr("data-download")+""
+            };
+            array.push(json);
+        }
+    });
+    if(array.length === 0){
+        alert("请选择要下载的歌曲")
+    }else {
+        var length = array.length;
+        for(var i = 0;i<length;i++){
+            var a = document.createElement("a");
+            a.href = array[i].m4a;
+            a.download = array[i].downUrl;
+            a.click();
+        }
+    }
 });
 //添加删除
 $headDelete.click(function () {
@@ -550,7 +575,7 @@ function init(musicArray) {
         $Ppot.css({left: 0});
         $img.find("img").addClass("rotate");//添加图片转动
         changeBg()
-    })
+    });
     //添加收藏事件
     $love = $(".love");
     $love.click(function () {
@@ -580,13 +605,15 @@ function init(musicArray) {
         }
     });
 
-
     oContent.style.top = '50px';//信息距离上50px距离
     //添加选中事件
     $songList.find(".checkbox").removeClass("oncheck");//初始化全选按钮默认为空
-    $oncheck =  $songListInfo.find(".checkbox");
-    $oncheck.click(function () {
+    $songListInfo.find(".checkbox").removeClass("oncheck");
+    $songList.find(".checkbox input").attr("checked",false);
+    $songListInfo.find(".checkbox input").prop("checked",false);
+    $songListInfo.find(".checkbox").click(function () {
         $(this).toggleClass("oncheck");
+        $(this).find("input").attr("checked", !$(this).find("input").attr("checked"));
     })
 
 }
