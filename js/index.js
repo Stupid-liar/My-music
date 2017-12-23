@@ -954,7 +954,7 @@ function changeBg() {
             backgroundImage: "url('img/bg.jpg')"
         });
     }else {
-        if(index + 1) {
+        if(index + 1) {//index === 0 的时候也是false.这里加一保证index有值就有音乐在播放。
             $("body").css({
                 backgroundImage: "url(" + $li.eq(index).attr("data-pic") + ")"
             })
