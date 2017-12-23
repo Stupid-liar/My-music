@@ -101,9 +101,19 @@ $(window).resize(function () {
 //初始化,列表，进度条，音量，下载，选中效果
 $(function () {
     //初始化,列表
-    var list = musicData;
-    init(list);
-    scroll();
+    if(localStorage.getItem("loveMusic")){
+        var data = localStorage.getItem("loveMusic").split("---");
+        var list2 = [];
+        data.splice( 0 , 1 );
+        for(var i = 0;i<data.length; i++){
+            list2[i] = JSON.parse(data[i]);
+        }
+        init(list2);
+        scroll();
+    }else {
+        $songListInfo.html("");
+        $songListInfo.append($("<div style='width: 100%; height: 100%; text-align: center; line-height: 300px; font-size: 20px; color: #ffffff;'>暂时没有喜欢的歌曲，点击收藏添加~</div>"));
+    }
     //选中操作
     $songList.find(".checkbox").click(function () {
         if($songList.find(".checkbox input").attr("checked") === "checked"){
@@ -370,12 +380,7 @@ $list.click(function (e) {
     if(e.target.nodeName === "LI"){
         $(e.target).addClass("on").siblings().removeClass("on");
         var src = e.target.dataset.num;
-        if("1" === src){
-            var list1 = musicData;
-            init(list1);
-            scroll();
-            return;
-        }if("2" === src){
+        if("2" === src){
             if(localStorage.getItem("loveMusic")){
                 var data = localStorage.getItem("loveMusic").split("---");
                 var list2 = [];
